@@ -1,0 +1,93 @@
+{
+  "queries": {
+    "general": [
+      {
+        "query": "Summarize the key findings from all documents",
+        "description": "Get a high-level overview of document contents"
+      },
+      {
+        "query": "What are the main themes discussed across the documents?",
+        "description": "Identify common topics and themes"
+      },
+      {
+        "query": "List all important dates mentioned in the documents",
+        "description": "Extract temporal information"
+      },
+      {
+        "query": "What recommendations are provided in the documents?",
+        "description": "Find actionable suggestions"
+      }
+    ],
+    "doctor": [
+      {
+        "query": "What is the patient's medical history and current medications?",
+        "description": "Extract patient medical information"
+      },
+      {
+        "query": "Identify any potential drug interactions or contraindications",
+        "description": "Safety check for medications"
+      },
+      {
+        "query": "What are the reported symptoms and their timeline?",
+        "description": "Track symptom progression"
+      },
+      {
+        "query": "Summarize all diagnostic test results",
+        "description": "Compile test findings"
+      }
+    ],
+    "lawyer": [
+      {
+        "query": "Find all precedents related to breach of contract in healthcare",
+        "description": "Legal research for specific case type"
+      },
+      {
+        "query": "What are the key legal arguments presented in these cases?",
+        "description": "Extract legal reasoning"
+      },
+      {
+        "query": "Identify statutory references and citations",
+        "description": "Find legal authorities"
+      },
+      {
+        "query": "What damages were awarded in similar cases?",
+        "description": "Research compensation precedents"
+      }
+    ],
+    "hr": [
+      {
+        "query": "Compare the 2022 and 2024 travel policies and highlight changes",
+        "description": "Policy comparison analysis"
+      },
+      {
+        "query": "What are the current compliance requirements for remote work?",
+        "description": "Regulatory compliance check"
+      },
+      {
+        "query": "List all employee benefits and eligibility criteria",
+        "description": "Benefits documentation"
+      },
+      {
+        "query": "What is the disciplinary process outlined in the handbook?",
+        "description": "Process documentation"
+      }
+    ]
+  },
+  "sample_datasets": [
+    {
+      "name": "medical-records-2024",
+      "description": "Patient medical records and clinical notes",
+      "files": ["patient_history.pdf", "lab_results.pdf", "medications.docx"]
+    },
+    {
+      "name": "legal-cases-contracts",
+      "description": "Contract law cases and precedents",
+      "files": ["case_smith_v_jones.pdf", "contract_breach_precedents.docx"]
+    },
+    {
+      "name": "hr-policies-2024",
+      "description": "Company HR policies and procedures",
+      "files": ["employee_handbook.pdf", "travel_policy.docx", "remote_work_policy.pdf"]
+    }
+  ]
+}

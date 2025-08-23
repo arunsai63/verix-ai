@@ -1,0 +1,90 @@
+[tool.poetry]
+name = "verix-ai-backend"
+version = "0.1.0"
+description = "AI assistant for document analysis with citations"
+authors = ["VerixAI Team"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+# Core dependencies
+fastapi = "^0.109.0"
+uvicorn = {extras = ["standard"], version = "^0.27.0"}
+python-multipart = "^0.0.9"
+pydantic = "^2.5.0"
+pydantic-settings = "^2.1.0"
+
+# Document processing
+markitdown = "^0.0.1a3"
+pypdf = "^3.17.0"
+python-docx = "^1.1.0"
+python-pptx = "^0.6.23"
+beautifulsoup4 = "^4.12.0"
+lxml = "^5.1.0"
+tiktoken = "^0.5.2"
+
+# LangChain and RAG
+langchain = "^0.1.0"
+langchain-community = "^0.0.20"
+langchain-openai = "^0.0.5"
+langchain-anthropic = "^0.1.0"
+openai = "^1.11.0"
+chromadb = "^0.4.22"
+httpx = "^0.27.0"
+
+# Strands Agents SDK
+strands-agents = "^0.1.1"
+
+# Database
+sqlalchemy = "^2.0.25"
+alembic = "^1.13.0"
+asyncpg = "^0.29.0"
+
+# File handling
+aiofiles = "^23.2.0"
+python-magic = "^0.4.27"
+
+# Security
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+bcrypt = "^4.1.0"
+
+# Utilities
+python-dotenv = "^1.0.0"
+click = "^8.1.0"
+rich = "^13.7.0"
+tenacity = "^8.2.0"
+
+[tool.poetry.group.dev.dependencies]
+# Testing
+pytest = "^7.4.0"
+pytest-asyncio = "^0.21.0"
+pytest-cov = "^4.1.0"
+httpx = "^0.27.0"
+faker = "^22.2.0"
+
+# Development
+black = "^24.1.0"
+flake8 = "^7.0.0"
+mypy = "^1.8.0"
+pre-commit = "^3.6.0"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+
+[tool.black]
+line-length = 100
+target-version = ['py310']
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

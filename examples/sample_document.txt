@@ -1,0 +1,50 @@
+SAMPLE MEDICAL RECORD
+Patient: John Doe
+Date: January 15, 2024
+MRN: 123456
+
+CHIEF COMPLAINT:
+Patient presents with persistent cough and shortness of breath for the past 2 weeks.
+
+HISTORY OF PRESENT ILLNESS:
+John Doe is a 45-year-old male who reports experiencing a dry cough that started approximately 14 days ago. The cough has progressively worsened and is now accompanied by shortness of breath, particularly during physical exertion. Patient denies fever, chest pain, or hemoptysis. No recent travel history or sick contacts reported.
+
+PAST MEDICAL HISTORY:
+- Hypertension (diagnosed 2019)
+- Type 2 Diabetes Mellitus (diagnosed 2021)
+- Seasonal allergies
+
+CURRENT MEDICATIONS:
+- Lisinopril 10mg daily
+- Metformin 1000mg twice daily
+- Loratadine 10mg as needed
+
+ALLERGIES:
+- Penicillin (rash)
+
+SOCIAL HISTORY:
+- Former smoker (quit 2020, 20 pack-year history)
+- Occasional alcohol use
+- Works as an office manager
+
+PHYSICAL EXAMINATION:
+- Vital Signs: BP 138/82, HR 88, RR 20, Temp 98.6°F, SpO2 95% on room air
+- General: Alert and oriented, mild respiratory distress
+- Lungs: Decreased breath sounds bilaterally, mild wheezing
+- Heart: Regular rate and rhythm, no murmurs
+
+ASSESSMENT AND PLAN:
+1. Acute bronchitis vs early COPD
+   - Order chest X-ray
+   - Prescribe albuterol inhaler
+   - Consider pulmonary function tests if symptoms persist
+
+2. Continue management of chronic conditions
+   - Monitor blood pressure and glucose levels
+
+FOLLOW-UP:
+Return in 2 weeks or sooner if symptoms worsen.
+
+Source: Internal Medicine Clinic Records
+Reference: Patient Chart #2024-001
+Citation: Dr. Sarah Johnson, MD, Internal Medicine
