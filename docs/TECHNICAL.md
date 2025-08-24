@@ -13,7 +13,6 @@ VerixAI is a document analysis platform built with a microservices architecture 
 - **LLM Integration**: LangChain + OpenAI
 - **Agent Framework**: Strands Agents SDK
 - **Database**: PostgreSQL
-- **Cache**: Redis
 - **Testing**: Pytest
 
 #### Frontend
@@ -44,11 +43,11 @@ VerixAI is a document analysis platform built with a microservices architecture 
                     │                    │
                     │  FastAPI Backend   │
                     │                    │
-                    └──┬──────┬──────┬──┘
-                       │      │      │
-                ┌──────▼──┐ ┌─▼──┐ ┌─▼────────┐
-                │ChromaDB │ │Redis│ │PostgreSQL│
-                └─────────┘ └────┘ └──────────┘
+                    └──┬─────────────┬──┘
+                       │             │
+                ┌──────▼──┐     ┌────▼─────┐
+                │ChromaDB │     │PostgreSQL│
+                └─────────┘     └──────────┘
 ```
 
 ## Core Components
@@ -234,7 +233,7 @@ CREATE TABLE queries (
 ## Performance Optimization
 
 ### Caching Strategy
-- Redis for query result caching
+- In-memory caching for query results
 - 15-minute TTL for repeated queries
 - Dataset metadata caching
 

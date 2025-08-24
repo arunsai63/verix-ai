@@ -61,7 +61,6 @@ verix-ai/
 - **LLM**: OpenAI GPT-4 for answer generation
 - **Agent System**: Strands Agents SDK for pipeline orchestration
 - **Database**: PostgreSQL for metadata (optional)
-- **Cache**: Redis for query caching
 
 ### Frontend Architecture
 - **Framework**: React 18 with TypeScript
@@ -147,7 +146,6 @@ DELETE /api/datasets/{name}
 services:
   postgres:    # Database for metadata
   chromadb:    # Vector database
-  redis:       # Cache layer
   backend:     # FastAPI application
   frontend:    # React application
   nginx:       # Reverse proxy (production)
@@ -245,7 +243,7 @@ answer = await rag_service.generate_answer(query, results, role)
 
 ## Optimization Opportunities
 
-1. **Caching**: Implement Redis for frequent queries
+1. **Caching**: Implement caching for frequent queries
 2. **Batch Processing**: Parallel document ingestion
 3. **Compression**: Store compressed chunks
 4. **Indexing**: Add keyword index alongside vectors

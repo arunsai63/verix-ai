@@ -16,7 +16,6 @@ class Settings(BaseSettings):
     cors_origins: List[str] = Field(default=["http://localhost:3000"], env="CORS_ORIGINS")
     
     database_url: Optional[str] = Field(default=None, env="DATABASE_URL")
-    redis_url: Optional[str] = Field(default="redis://localhost:6379", env="REDIS_URL")
     
     vector_store_type: str = Field(default="chromadb", env="VECTOR_STORE_TYPE")
     chroma_host: str = Field(default="localhost", env="CHROMA_HOST")

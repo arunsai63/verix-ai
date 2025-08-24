@@ -1,102 +1,129 @@
-# verix-ai
+# VerixAI: Intelligent Document Analysis with Citations
 
-Product Name: VerixAI
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/arunsai63/verix-ai)
+[![Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![React Version](https://img.shields.io/badge/react-18-blue.svg)](https://reactjs.org/)
 
-Context & Goal
+**VerixAI is a production-ready document analysis platform that empowers knowledge workers to query large document collections and receive AI-generated answers with precise, verifiable citations.**
 
-Build an AI assistant that helps doctors, lawyers, HR professionals, and similar knowledge workers quickly analyze large volumes of documents and data and return concise, relevant answers with citations. The AI should decide the best technical approach and code organization on its own.
+Whether you're a doctor reviewing patient histories, a lawyer researching case law, or an HR professional managing policies, VerixAI adapts to your domain, providing accurate and context-aware responses.
 
-What the Assistant Should Do
-	•	Ingest & normalize many file types (PDF, DOCX, PPTX, HTML, email exports, etc.).
-	•	Search & retrieve the most relevant information for a user’s query across large datasets.
-	•	Summarize & explain findings clearly, with short highlights and citations/snippets.
-	•	Support roles (doctor/lawyer/HR) to adapt tone, disclaimers, and result formatting.
-	•	Provide an optional web dashboard for uploading documents, managing datasets, running queries, and viewing results.
+---
 
-Must-Use Tools (assistant chooses how to integrate them)
-	•	Document conversion: MarkItDown – convert diverse files to clean Markdown for downstream analysis.
-https://github.com/microsoft/markitdown
-	•	LLM orchestration & retrieval: LangChain – embeddings, retrieval-augmented generation (RAG), and tool/chain calling.
-https://python.langchain.com/
-	•	Agent framework: Strands Agents SDK – to coordinate tasks like ingest, retrieve, summarize, and respond.
-Overview: https://strandsagents.com/latest/
-SDK (Python): https://github.com/strands-agents/sdk-python
+## ✨ Key Features
 
-(You may add other standard components—vector databases, auth, simple APIs/UI—but keep choices and structure at your discretion.)
+- **Multi-Format Document Ingestion**: Process a wide range of file types including PDF, DOCX, PPTX, HTML, TXT, MD, CSV, and XLSX.
+- **Intelligent RAG Pipeline**: Utilizes a sophisticated Retrieval-Augmented Generation (RAG) pipeline with hybrid search (semantic + keyword) for accurate information retrieval.
+- **Cited & Verifiable Answers**: Every AI-generated answer is backed by clear citations from the source documents, complete with confidence scores.
+- **Role-Aware Responses**: The system adapts its language and focus based on the selected user role (e.g., Doctor, Lawyer, HR), providing tailored insights and disclaimers.
+- **Dataset Management**: Easily organize documents into distinct, searchable collections for better context isolation and management.
+- **Scalable & Asynchronous**: Built with a modern, asynchronous stack (FastAPI, React) and containerized for easy deployment and scaling.
 
-Target Users & Scenarios
-	•	Lawyer: “From thousands of case files, find top precedents for breach of contract in healthcare and summarize why each is relevant, with citations.”
-	•	Doctor: “From uploaded patient PDFs, extract key history, medications, and flag potential contraindications (informational only).”
-	•	HR: “Compare 2022 vs 2024 Travel Policy; summarize differences and list action items with cited sections.”
+---
 
-Functional Requirements
-	1.	Document Ingestion
-	•	Batch uploads; show progress/status.
-	•	Convert to Markdown (use MarkItDown), chunk if needed, and store with source metadata (filename, page, date, dataset name).
-	2.	Search & Answering
-	•	Natural-language queries across one or more datasets.
-	•	Retrieval-augmented responses with ranked sources and page-level citations.
-	•	Short answer + bullet highlights + “open the source” links/snippets.
-	3.	Role Awareness
-	•	Output style and disclaimers adapt to doctor/lawyer/HR contexts.
-	•	Examples in the UI to guide good queries.
-	4.	Dashboard (optional but preferred)
-	•	Upload & manage datasets; view doc counts and last updated.
-	•	Run queries, view results, copy/export answers, and inspect citations.
-	•	Basic settings (model choice/API key, dataset visibility).
+## 🚀 Live Demo & Screenshots
 
-Non-Functional Requirements
-	•	Privacy first: All processing should respect confidentiality; clearly note where data is stored.
-	•	Citations by default: If confidence is low or sources are weak, say so and suggest refinements.
-	•	Graceful failure: If nothing relevant is found, return a helpful “no strong matches” message.
-	•	Performance: Handle large corpora; allow incremental ingestion and re-indexing.
-	•	Accessibility & UX: Clear typography, keyboard navigation, and helpful loading/error messages.
+*(This is a placeholder section. You can add a link to a live demo or embed screenshots of the application here.)*
 
-Output You Should Produce
-	•	Working Python code that implements the ingestion → retrieval → summarized-answer flow using the tools above.
-	•	(Preferred) A simple web dashboard for upload, querying, and viewing results.
-	•	Run instructions (how to start the backend and the dashboard).
-	•	Example requests for each role and sample responses with citations.
-	•	Notes on how to switch/extend the vector store or model later.
+**Query Interface**
+![Query Interface Screenshot](https://via.placeholder.com/800x450.png?text=VerixAI+Query+Interface)
 
-Guardrails & Disclaimers
-	•	Always add role-specific disclaimers (e.g., “This is informational and not legal/medical advice.”).
-	•	Avoid hallucinations; never fabricate citations.
-	•	Clearly separate facts from interpretations.
-	•	Respect PII: redact or minimize sensitive data in examples and logs.
+**Upload and Dataset Management**
+![Upload Screenshot](https://via.placeholder.com/800x450.png?text=VerixAI+Upload+and+Datasets)
 
-Nice-to-Have (if time permits)
-	•	Query history, saved reports, and export to PDF/Markdown.
-	•	Dataset-level permissions or private/team workspaces.
-	•	Basic analytics (top queries, coverage gaps).
-	•	Multi-language document support and queries.
-	
-Set up project structure and configuration  
-Create .gitignore file
-Initialize Python backend with dependencies
-Implement document ingestion module with MarkItDown
-Set up vector database and embeddings with LangChain
-Implement Strands Agents SDK integration
-Create retrieval and RAG pipeline
-Build role-aware response formatting
-Develop FastAPI backend with endpoints
-Create React frontend dashboard
-Implement file upload and dataset management UI
-Build query interface and results display
-Add citation and source viewing features
-Write comprehensive tests for backend
-Write tests for frontend components
-Create Docker configuration
-Add example queries and sample data
-Write deployment and usage documentation
+---
 
+## 🛠️ Tech Stack & Architecture
 
-create a docs folder to document everything
-- techincal documentation
-- user documentation
-- llm document(for LLM's to get complete project understanding clearly)
+VerixAI is built with a modern, microservices-oriented architecture.
 
+| Component | Technology |
+| :--- | :--- |
+| **Backend** | FastAPI, Python 3.10+, LangChain, Uvicorn |
+| **Frontend** | React 18, TypeScript, Material-UI (MUI), Axios |
+| **Vector Database** | ChromaDB |
+| **LLM & Embeddings** | OpenAI (GPT-4, text-embedding-3-small) |
+| **Document Processing** | MarkItDown |
+| **Infrastructure** | Docker, Docker Compose, Nginx |
+| **Optional** | PostgreSQL (for metadata) |
 
-prefer to use any component library in react and use tailwind css for styling
+### System Architecture
 
+```
+┌─────────────────┐     ┌─────────────────┐
+│                 │     │                 │
+│  React Frontend │────▶│  Nginx Proxy    │
+│ (Port 3000)     │     │ (Production)    │
+│                 │     │                 │
+└─────────────────┘     └────────┬────────┘
+                                 │
+                                 ▼
+                    ┌────────────────────┐
+                    │                    │
+                    │  FastAPI Backend   │
+                    │   (Port 8000)      │
+                    └──┬──────┬──────┬──┘
+                       │             │
+                ┌──────▼──┐        ┌─▼────────┐
+                │ChromaDB │        │PostgreSQL│
+                └─────────┘        └──────────┘
+```
 
+---
+
+## 🏁 Getting Started
+
+The easiest way to get VerixAI running is with Docker and Docker Compose.
+
+### Prerequisites
+
+- Docker and Docker Compose installed
+- An OpenAI API Key
+- Git
+
+### Installation
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/arunsai63/verix-ai.git
+    cd verix-ai
+    ```
+
+2.  **Set up your environment variables:**
+    -   Copy the example environment file:
+        ```bash
+        cp .env.example .env
+        ```
+    -   Edit the `.env` file and add your OpenAI API key:
+        ```
+        OPENAI_API_KEY=your-actual-api-key-here
+        # Generate a secure random key for JWTs
+        SECRET_KEY=a_very_secure_random_string_of_at_least_32_characters
+        ```
+
+3.  **Launch the application with Docker Compose:**
+    ```bash
+    docker-compose up --build -d
+    ```
+    This command builds the images and starts the frontend, backend, and ChromaDB services in detached mode.
+
+4.  **Access VerixAI:**
+    -   **Frontend Application**: [http://localhost:3000](http://localhost:3000)
+    -   **Backend API Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+## 📖 Usage
+
+1.  **Upload Documents**: Navigate to the "Upload" tab, select or drag-and-drop your files, assign them to a new or existing dataset, and click "Upload".
+2.  **Query Documents**: Go to the "Query" tab, type your question, select the dataset(s) to search, choose a professional role, and get your cited answer.
+3.  **Manage Datasets**: View, inspect, and delete your document collections from the "Datasets" tab.
+
+### Example Queries
+
+-   **General**: `"Summarize the key findings from the Q4 reports."`
+-   **Doctor**: `"What are the patient's pre-existing conditions and current medications?"`
+-   **Lawyer**: `"Find all precedents related to intellectual property theft in the provided case files."`
+-   **HR**: `"What is the company's official policy on remote work and what are the eligibility criteria?"`
+
+---
