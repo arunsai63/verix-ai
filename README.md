@@ -8,6 +8,8 @@
 
 Whether you're a doctor reviewing patient histories, a lawyer researching case law, or an HR professional managing policies, VerixAI adapts to your domain, providing accurate and context-aware responses.
 
+<img width="1541" height="770" alt="image" src="https://github.com/user-attachments/assets/b58ea83a-fb0f-4e24-af46-fd4a8179f4dd" />
+
 ---
 
 ## ✨ Key Features
