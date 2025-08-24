@@ -60,10 +60,21 @@ class Settings(BaseSettings):
     datasets_directory: str = Field(default="./datasets", env="DATASETS_DIR")
     upload_dir: str = Field(default="./uploads", env="UPLOAD_DIR")  # Alias for compatibility
     datasets_dir: str = Field(default="./datasets", env="DATASETS_DIR")  # Alias for compatibility
+    
+    # Async Processing Configuration
+    async_processing_enabled: bool = Field(default=True, env="ASYNC_PROCESSING_ENABLED")
+    max_parallel_documents: int = Field(default=5, env="MAX_PARALLEL_DOCUMENTS")
+    max_parallel_chunks: int = Field(default=10, env="MAX_PARALLEL_CHUNKS")
+    
+    # Multi-Agent System Configuration
+    multi_agent_enabled: bool = Field(default=True, env="MULTI_AGENT_ENABLED")
+    max_agents_per_query: int = Field(default=6, env="MAX_AGENTS_PER_QUERY")
 
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+        allow_extra = True
+        extra = "allow"
 
 
 settings = Settings()

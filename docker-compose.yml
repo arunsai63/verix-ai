@@ -19,6 +19,23 @@ services:
       timeout: 5s
       retries: 5
 
+  # Redis for Queue Management
+  redis:
+    image: redis:7-alpine
+    container_name: verixai-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - verixai-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: redis-server --appendonly yes
+
   # ChromaDB Vector Database
   chromadb:
     image: chromadb/chroma:latest
@@ -33,26 +50,36 @@ services:
       IS_PERSISTENT: TRUE
       ANONYMIZED_TELEMETRY: FALSE
 
-  # # Ollama Service (for local LLM)
-  # ollama:
-  #   image: ollama/ollama:latest
-  #   container_name: verixai-ollama
-  #   ports:
-  #     - "11434:11434"
-  #   volumes:
-  #     - ollama_data:/root/.ollama
-  #   networks:
-  #     - verixai-network
-  #   environment:
-  #     OLLAMA_KEEP_ALIVE: "5m"
-  #   deploy:
-  #     resources:
-  #       reservations:
-  #         devices:
-  #           - driver: nvidia
-  #             count: all
-  #             capabilities: [gpu]
-  #   command: serve
+  # Ollama Service (for local LLM and embeddings)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: verixai-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+      - ./ollama-scripts:/scripts
+    networks:
+      - verixai-network
+    environment:
+      OLLAMA_KEEP_ALIVE: "5m"
+      OLLAMA_HOST: "0.0.0.0"
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    entrypoint: ["/bin/sh", "-c"]
+    command: |
+      "ollama serve &
+      sleep 5
+      echo 'Pulling nomic-embed-text model...'
+      ollama pull nomic-embed-text
+      echo 'Pulling llama3.2:1b model...'
+      ollama pull llama3.2:1b
+      echo 'Models pulled successfully'
+      wait"
 
   # Backend API
   backend:
@@ -64,16 +91,16 @@ services:
       DATABASE_URL: postgresql+asyncpg://verixai:verixai_password@postgres:5432/verixai_db
       CHROMA_HOST: chromadb
       CHROMA_PORT: 8000
+      # Redis Configuration
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
       # LLM Provider Configuration
       LLM_PROVIDER: ${LLM_PROVIDER:-ollama}
       EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-ollama}
       # Ollama Configuration
-      # OLLAMA_BASE_URL: http://ollama:11434
-      # OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-llama3.2}
-      # OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
-
-      OLLAMA_BASE_URL: http://192.168.0.124:11434
-      OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-deepseek-r1:14b}
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-llama3.2:1b}
       OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
 
       # OpenAI Configuration (Optional)
@@ -84,6 +111,11 @@ services:
       # CLAUDE_API_KEY: ${CLAUDE_API_KEY}
       # CLAUDE_CHAT_MODEL: ${CLAUDE_CHAT_MODEL:-claude-3-opus-20240229}
       SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      MULTI_AGENT_ENABLED: ${MULTI_AGENT_ENABLED:-true}
+      ASYNC_PROCESSING_ENABLED: ${ASYNC_PROCESSING_ENABLED:-true}
+      MAX_PARALLEL_DOCUMENTS: ${MAX_PARALLEL_DOCUMENTS:-5}
+      MAX_PARALLEL_CHUNKS: ${MAX_PARALLEL_CHUNKS:-10}
+      MAX_AGENTS_PER_QUERY: ${MAX_AGENTS_PER_QUERY:-6}
     volumes:
       - ./backend:/app
       - ./uploads:/app/uploads
@@ -93,10 +125,108 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
       chromadb:
         condition: service_started
-      # ollama:
-      #   condition: service_started
+      ollama:
+        condition: service_healthy
+    networks:
+      - verixai-network
+
+  # Celery Worker for Background Processing
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: verixai-celery
+    command: celery -A app.celery_app worker --loglevel=info --concurrency=4 --queues=default,documents
+    environment:
+      DATABASE_URL: postgresql+asyncpg://verixai:verixai_password@postgres:5432/verixai_db
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8000
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      LLM_PROVIDER: ${LLM_PROVIDER:-ollama}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-ollama}
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-llama3.2:1b}
+      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      MULTI_AGENT_ENABLED: ${MULTI_AGENT_ENABLED:-true}
+      MAX_PARALLEL_DOCUMENTS: ${MAX_PARALLEL_DOCUMENTS:-5}
+      MAX_PARALLEL_CHUNKS: ${MAX_PARALLEL_CHUNKS:-10}
+    volumes:
+      - ./backend:/app
+      - ./uploads:/app/uploads
+      - ./datasets:/app/datasets
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+      ollama:
+        condition: service_healthy
+    networks:
+      - verixai-network
+
+  # Additional Celery worker for large documents
+  celery-large:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: verixai-celery-large
+    command: celery -A app.celery_app worker --loglevel=info --concurrency=2 --queues=large_documents
+    environment:
+      DATABASE_URL: postgresql+asyncpg://verixai:verixai_password@postgres:5432/verixai_db
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8000
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      LLM_PROVIDER: ${LLM_PROVIDER:-ollama}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-ollama}
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-llama3.2:1b}
+      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      MULTI_AGENT_ENABLED: ${MULTI_AGENT_ENABLED:-true}
+      MAX_PARALLEL_DOCUMENTS: ${MAX_PARALLEL_DOCUMENTS:-2}
+      MAX_PARALLEL_CHUNKS: ${MAX_PARALLEL_CHUNKS:-5}
+    volumes:
+      - ./backend:/app
+      - ./uploads:/app/uploads
+      - ./datasets:/app/datasets
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+      ollama:
+        condition: service_healthy
+    networks:
+      - verixai-network
+
+  # Flower - Celery monitoring tool
+  flower:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: verixai-flower
+    command: celery -A app.celery_app flower --port=5555 --broker=redis://redis:6379/0
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - celery
     networks:
       - verixai-network
 
@@ -124,5 +254,6 @@ networks:
 
 volumes:
   postgres_data:
+  redis_data:
   chroma_data:
-  # ollama_data:
+  ollama_data:

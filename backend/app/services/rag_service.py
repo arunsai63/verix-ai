@@ -170,16 +170,21 @@ class RAGService:
             parsed = json.loads(response)
             
             citations = []
+            # Always include top search results as citations, not just mentioned ones
             for idx, result in enumerate(search_results[:5], 1):
-                if f"[Source {idx}]" in parsed.get("answer", ""):
-                    citations.append({
-                        "source_number": idx,
-                        "filename": result["metadata"].get("filename"),
-                        "dataset": result["metadata"].get("dataset_name"),
-                        "chunk_index": result["metadata"].get("chunk_index"),
-                        "snippet": result["content"][:200] + "...",
-                        "relevance_score": result.get("score", 0)
-                    })
+                # Check if this source was mentioned in the answer
+                is_mentioned = f"[Source {idx}]" in parsed.get("answer", "")
+                
+                # Add citation for all top results to ensure we always have citations
+                citations.append({
+                    "source_number": idx,
+                    "filename": result["metadata"].get("filename", "Unknown"),
+                    "dataset": result["metadata"].get("dataset_name", "Unknown"),
+                    "chunk_index": result["metadata"].get("chunk_index", 0),
+                    "snippet": result["content"][:200] + "..." if len(result["content"]) > 200 else result["content"],
+                    "relevance_score": result.get("score", 0),
+                    "mentioned_in_answer": is_mentioned  # Track if it was actually cited
+                })
             
             return {
                 "answer": parsed.get("answer", "Unable to generate answer"),
@@ -190,9 +195,22 @@ class RAGService:
             }
             
         except json.JSONDecodeError:
+            # If JSON parsing fails, still provide citations from search results
+            citations = []
+            for idx, result in enumerate(search_results[:5], 1):
+                citations.append({
+                    "source_number": idx,
+                    "filename": result["metadata"].get("filename", "Unknown"),
+                    "dataset": result["metadata"].get("dataset_name", "Unknown"),
+                    "chunk_index": result["metadata"].get("chunk_index", 0),
+                    "snippet": result["content"][:200] + "..." if len(result["content"]) > 200 else result["content"],
+                    "relevance_score": result.get("score", 0),
+                    "mentioned_in_answer": False  # Can't determine without parsed response
+                })
+            
             return {
                 "answer": response,
-                "citations": [],
+                "citations": citations,
                 "highlights": [],
                 "confidence": "low"
             }

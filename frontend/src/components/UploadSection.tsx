@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
 import {
@@ -39,14 +39,18 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
   const [error, setError] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [jobStatus, setJobStatus] = useState<any>(null);
+  const [processingStats, setProcessingStats] = useState<{chunks: number, documents: number}>({chunks: 0, documents: 0});
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: any[]) => {
     setFiles((prev) => [...prev, ...acceptedFiles]);
     setError(null);
-    
+
     if (rejectedFiles.length > 0) {
-      const errors = rejectedFiles.map(f => 
-        f.errors[0]?.code === 'file-too-large' 
+      const errors = rejectedFiles.map(f =>
+        f.errors[0]?.code === 'file-too-large'
           ? `${f.file.name} exceeds 100MB limit`
           : `${f.file.name} is not a supported file type`
       );
@@ -104,6 +108,119 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
     }
   };
 
+  const startPolling = useCallback((jobId: string) => {
+    const poll = async () => {
+      try {
+        const response = await api.getJobStatus(jobId);
+        const data = response.data;
+
+        // Handle Celery task status format
+        if (data.celery_status) {
+          const celeryStatus = data.status; // Celery status (PENDING, SUCCESS, FAILURE, etc.)
+          const result = data.result; // Actual job result
+          
+          if (celeryStatus === 'SUCCESS' && result) {
+            // Job completed successfully
+            setUploadProgress(100);
+            setProcessingStats({
+              documents: result.documents_processed || 0,
+              chunks: result.chunks_created || 0
+            });
+            
+            // Clear polling
+            pollingIntervalRef.current = null;
+            setUploadSuccess(true);
+            setUploading(false);
+
+            // Reset after delay
+            setTimeout(() => {
+              setFiles([]);
+              setDatasetName('');
+              setSelectedDataset('');
+              setUploadProgress(0);
+              setUploadSuccess(false);
+              setJobId(null);
+              setJobStatus(null);
+              onUploadComplete();
+            }, 2000);
+            
+            return;
+          } else if (celeryStatus === 'FAILURE') {
+            // Job failed
+            pollingIntervalRef.current = null;
+            setError(result?.error || 'Processing failed');
+            setUploading(false);
+            setUploadProgress(0);
+            setJobId(null);
+            setJobStatus(null);
+            return;
+          } else if (celeryStatus === 'PENDING' || celeryStatus === 'STARTED' || celeryStatus === 'RETRY') {
+            // Still processing
+            setUploadProgress(celeryStatus === 'STARTED' ? 50 : 25);
+            // Continue polling
+            pollingIntervalRef.current = setTimeout(() => poll(), 2000);
+            return;
+          }
+        }
+        
+        // Fallback to old format (Redis job tracker)
+        const job = data;
+        setJobStatus(job);
+        setUploadProgress(job.progress || 0);
+        
+        // Update processing stats
+        if (job.documents_processed || job.chunks_created) {
+          setProcessingStats({
+            documents: job.documents_processed || 0,
+            chunks: job.chunks_created || 0
+          });
+        }
+
+        // Check if job is complete or failed
+        if (job.status === 'completed' || job.status === 'completed_with_errors' || job.status === 'failed' || job.status === 'timeout' || job.status === 'cancelled') {
+          // Clear polling reference
+          pollingIntervalRef.current = null;
+
+          if (job.status === 'completed' || job.status === 'completed_with_errors') {
+            setUploadSuccess(true);
+            setUploading(false);
+
+            // Reset after delay
+            setTimeout(() => {
+              setFiles([]);
+              setDatasetName('');
+              setSelectedDataset('');
+              setUploadProgress(0);
+              setUploadSuccess(false);
+              setJobId(null);
+              setJobStatus(null);
+              onUploadComplete();
+            }, 2000);
+          } else {
+            // Failed status
+            setError(job.error || 'Processing failed');
+            setUploading(false);
+            setUploadProgress(0);
+            setJobId(null);
+            setJobStatus(null);
+          }
+        } else {
+          // Continue polling - wait for current request to complete before sending next
+          pollingIntervalRef.current = setTimeout(() => poll(), 2000);
+        }
+      } catch (err) {
+        console.error('Error polling job status:', err);
+        // Stop polling on error
+        pollingIntervalRef.current = null;
+        setError('Failed to check job status');
+        setUploading(false);
+      }
+    };
+
+    // Start the polling
+    poll();
+  }, [onUploadComplete]);
+
   const handleUpload = async () => {
     if (files.length === 0) {
       setError('Please select at least one file to upload');
@@ -120,33 +237,61 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
     setError(null);
     setUploadProgress(0);
     setUploadSuccess(false);
+    setJobId(null);
+    setJobStatus(null);
 
     try {
-      const progressInterval = setInterval(() => {
-        setUploadProgress((prev) => Math.min(prev + 10, 90));
-      }, 500);
+      // Upload with async processing
+      const response = await api.uploadDocuments(files, targetDataset, undefined, true);
 
-      await api.uploadDocuments(files, targetDataset);
+      if (response.data.status === 'queued' && response.data.job_id) {
+        // Queue-based processing
+        const newJobId = response.data.job_id;
+        setJobId(newJobId);
+        
+        // Show initial message
+        if (response.data.message) {
+          console.log('Processing:', response.data.message);
+        }
 
-      clearInterval(progressInterval);
-      setUploadProgress(100);
-      setUploadSuccess(true);
+        // Start polling
+        startPolling(newJobId);
+      } else if (response.data.job_id) {
+        // Legacy async processing
+        const newJobId = response.data.job_id;
+        setJobId(newJobId);
+        startPolling(newJobId);
+      } else {
+        // Sync processing (fallback)
+        setUploadProgress(100);
+        setUploadSuccess(true);
+        setUploading(false);
 
-      setTimeout(() => {
-        setFiles([]);
-        setDatasetName('');
-        setSelectedDataset('');
-        setUploadProgress(0);
-        setUploadSuccess(false);
-        onUploadComplete();
-      }, 2000);
+        setTimeout(() => {
+          setFiles([]);
+          setDatasetName('');
+          setSelectedDataset('');
+          setUploadProgress(0);
+          setUploadSuccess(false);
+          onUploadComplete();
+        }, 2000);
+      }
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Upload failed. Please try again.');
       setUploadProgress(0);
-    } finally {
       setUploading(false);
     }
   };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearTimeout(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <motion.div
@@ -172,21 +317,21 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
             className={`
               relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer
               transition-all duration-300 group
-              ${isDragActive 
-                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' 
+              ${isDragActive
+                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
                 : 'border-neutral-300 dark:border-neutral-700 hover:border-primary-400 hover:bg-primary-50/50 dark:hover:bg-primary-900/10'
               }
             `}
           >
             <input {...getInputProps()} />
-            
+
             {/* Animated background pattern */}
             <div className="absolute inset-0 opacity-5">
               <div className="absolute inset-0 bg-gradient-mesh animate-gradient"></div>
             </div>
-            
+
             <motion.div
-              animate={{ 
+              animate={{
                 y: isDragActive ? -10 : 0,
                 scale: isDragActive ? 1.1 : 1
               }}
@@ -196,15 +341,15 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
               <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-primary-400 to-accent-400 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Cloud className="w-10 h-10 text-white" />
               </div>
-              
+
               <h3 className="text-xl font-semibold mb-2 text-neutral-900 dark:text-neutral-100">
                 {isDragActive ? 'Drop your files here' : 'Drag & drop files or click to browse'}
               </h3>
-              
+
               <p className="text-neutral-600 dark:text-neutral-400 mb-4">
                 Support for PDF, DOCX, PPTX, HTML, TXT, MD, CSV, XLSX
               </p>
-              
+
               <div className="flex items-center justify-center space-x-6 text-sm text-neutral-500">
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="w-4 h-4 text-success-500" />
@@ -238,7 +383,7 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
                     {files.length} {files.length === 1 ? 'file' : 'files'}
                   </Badge>
                 </div>
-                
+
                 <div className="space-y-2 max-h-64 overflow-y-auto custom-scrollbar">
                   {files.map((file, index) => (
                     <motion.div
@@ -259,7 +404,7 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
                           </p>
                         </div>
                       </div>
-                      
+
                       <button
                         onClick={() => removeFile(index)}
                         disabled={uploading}
@@ -282,7 +427,7 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
           <h3 className="text-lg font-semibold mb-4 text-neutral-900 dark:text-neutral-100">
             Dataset Configuration
           </h3>
-          
+
           <div className="space-y-4">
             {/* Dataset Option Toggle */}
             <div className="flex space-x-2 p-1 bg-neutral-800 rounded-xl">
@@ -291,8 +436,8 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
                 disabled={uploading}
                 className={`
                   flex-1 py-2.5 px-4 rounded-lg font-medium transition-all duration-200
-                  ${!useExistingDataset 
-                    ? 'bg-neutral-700 text-primary-400 shadow-sm' 
+                  ${!useExistingDataset
+                    ? 'bg-neutral-700 text-primary-400 shadow-sm'
                     : 'text-neutral-400 hover:text-neutral-200'
                   }
                 `}
@@ -302,14 +447,14 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
                   <span>Create New Dataset</span>
                 </div>
               </button>
-              
+
               <button
                 onClick={() => setUseExistingDataset(true)}
                 disabled={uploading || datasets.length === 0}
                 className={`
                   flex-1 py-2.5 px-4 rounded-lg font-medium transition-all duration-200
-                  ${useExistingDataset 
-                    ? 'bg-neutral-700 text-primary-400 shadow-sm' 
+                  ${useExistingDataset
+                    ? 'bg-neutral-700 text-primary-400 shadow-sm'
                     : 'text-neutral-400 hover:text-neutral-200'
                   }
                   ${datasets.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}
@@ -405,10 +550,16 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
                     </div>
                     <div>
                       <p className="font-medium text-neutral-900 dark:text-neutral-100">
-                        Uploading and processing documents...
+                        {uploadProgress === 100 
+                          ? 'Processing complete!'
+                          : uploadProgress >= 50
+                          ? 'Processing documents...'
+                          : 'Uploading and queueing documents...'}
                       </p>
                       <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                        This may take a few moments
+                        {processingStats.documents > 0 || processingStats.chunks > 0
+                          ? `${processingStats.documents} of ${files.length} files processed | ${processingStats.chunks} chunks created`
+                          : 'This may take a few moments'}
                       </p>
                     </div>
                   </div>
@@ -422,6 +573,37 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
                   size="lg"
                   animated
                 />
+
+                {/* Job Logs or File Status */}
+                {(jobStatus?.logs || jobStatus?.files) && (
+                  <div className="mt-4 space-y-2 max-h-32 overflow-y-auto custom-scrollbar">
+                    {jobStatus.files ? jobStatus.files.map((file: any) => (
+                      <div key={file.name} className="flex items-center justify-between text-sm">
+                        <div className="flex items-center space-x-2">
+                          {file.status === 'completed' && <CheckCircle className="w-4 h-4 text-success-500" />}
+                          {file.status === 'processing' && <ArrowUpCircle className="w-4 h-4 text-primary-500 animate-spin" />}
+                          {file.status === 'failed' && <AlertCircle className="w-4 h-4 text-error-500" />}
+                          {file.status === 'pending' && <div className="w-4 h-4 rounded-full border-2 border-neutral-400" />}
+                          <span className="text-neutral-700 dark:text-neutral-300">{file.name}</span>
+                        </div>
+                        <span className={`text-xs ${
+                          file.status === 'completed' ? 'text-success-600 dark:text-success-400' :
+                          file.status === 'processing' ? 'text-primary-600 dark:text-primary-400' :
+                          file.status === 'failed' ? 'text-error-600 dark:text-error-400' :
+                          'text-neutral-500'
+                        }`}>
+                          {file.status} {file.chunks ? `(${file.chunks} chunks)` : ''}
+                        </span>
+                      </div>
+                    )) : jobStatus.logs?.slice(-5).map((log: any, idx: number) => (
+                      <div key={idx} className="text-xs text-neutral-600 dark:text-neutral-400">
+                        <span className="text-neutral-500">{new Date(log.timestamp).toLocaleTimeString()}</span>
+                        {' '}
+                        <span className={log.level === 'error' ? 'text-error-500' : ''}>{log.message}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </Card>
           </motion.div>
@@ -450,7 +632,9 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
                   Upload Successful!
                 </h3>
                 <p className="text-success-700 dark:text-success-300">
-                  Your documents have been processed and are ready for analysis
+                  {processingStats.documents > 0 
+                    ? `Successfully processed ${processingStats.documents} documents with ${processingStats.chunks} chunks`
+                    : 'Your documents have been processed and are ready for analysis'}
                 </p>
               </div>
             </Card>
