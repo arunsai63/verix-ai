@@ -22,14 +22,15 @@ Whether you're a doctor reviewing patient histories, a lawyer researching case l
 ---
 
 ## 🚀 Live Demo & Screenshots
+<img width="1538" height="771" alt="image" src="https://github.com/user-attachments/assets/a534bb5b-b078-4af9-a38b-0f2d0b727189" />
 
-*(This is a placeholder section. You can add a link to a live demo or embed screenshots of the application here.)*
 
 **Query Interface**
-![Query Interface Screenshot](https://via.placeholder.com/800x450.png?text=VerixAI+Query+Interface)
+<img width="1534" height="763" alt="image" src="https://github.com/user-attachments/assets/3a510c9e-3221-4bde-86b9-2a956189c536" />
+
 
 **Upload and Dataset Management**
-![Upload Screenshot](https://via.placeholder.com/800x450.png?text=VerixAI+Upload+and+Datasets)
+<img width="1232" height="415" alt="image" src="https://github.com/user-attachments/assets/9ea08801-0366-40e8-bbdb-b528857b91da" />
 
 ---
 
