@@ -7,7 +7,7 @@ import './index.css';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/verix-ai">
       <AnimatePresence mode="wait">
         <Routes>
           <Route path="/" element={<LandingPage />} />

@@ -300,6 +300,7 @@ const Dashboard: React.FC = () => {
 
 // Dashboard Overview Component
 const DashboardOverview: React.FC<{ datasets: Dataset[] }> = ({ datasets }) => {
+  const navigate = useNavigate();
   const totalDocuments = datasets.reduce((acc, dataset) => acc + dataset.document_count, 0);
   const totalSize = datasets.reduce((acc, dataset) => acc + dataset.size_bytes, 0);
 
@@ -370,7 +371,7 @@ const DashboardOverview: React.FC<{ datasets: Dataset[] }> = ({ datasets }) => {
               variant="primary"
               fullWidth
               leftIcon={<Upload className="w-4 h-4" />}
-              onClick={() => window.location.href = '/dashboard/upload'}
+              onClick={() => navigate('/dashboard/upload')}
             >
               Upload New Documents
             </Button>
@@ -378,7 +379,7 @@ const DashboardOverview: React.FC<{ datasets: Dataset[] }> = ({ datasets }) => {
               variant="outline"
               fullWidth
               leftIcon={<Search className="w-4 h-4" />}
-              onClick={() => window.location.href = '/dashboard/query'}
+              onClick={() => navigate('/dashboard/query')}
             >
               Query Documents
             </Button>
@@ -386,7 +387,7 @@ const DashboardOverview: React.FC<{ datasets: Dataset[] }> = ({ datasets }) => {
               variant="ghost"
               fullWidth
               leftIcon={<Database className="w-4 h-4" />}
-              onClick={() => window.location.href = '/dashboard/datasets'}
+              onClick={() => navigate('/dashboard/datasets')}
             >
               Manage Datasets
             </Button>
