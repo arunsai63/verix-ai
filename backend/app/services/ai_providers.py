@@ -126,12 +126,25 @@ class OllamaProvider(BaseLLMProvider):
                 if response.status_code == 200:
                     models = response.json().get("models", [])
                     model_names = [m["name"] for m in models]
-                    if self.chat_model not in model_names:
+                    
+                    # Check chat model (handle with/without tags)
+                    chat_model_found = any(
+                        name == self.chat_model or name.startswith(f"{self.chat_model}:")
+                        for name in model_names
+                    )
+                    if not chat_model_found:
                         logger.warning(f"Chat model {self.chat_model} not found in Ollama. Available: {model_names}")
                         return False
-                    if self.embedding_model not in model_names:
+                    
+                    # Check embedding model (handle with/without tags)
+                    embedding_model_found = any(
+                        name == self.embedding_model or name.startswith(f"{self.embedding_model}:")
+                        for name in model_names
+                    )
+                    if not embedding_model_found:
                         logger.warning(f"Embedding model {self.embedding_model} not found in Ollama. Available: {model_names}")
                         return False
+                    
                     return True
                 return False
         except Exception as e:

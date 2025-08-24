@@ -261,13 +261,16 @@ const QuerySection: React.FC<QuerySectionProps> = ({
                 )}
 
                 {/* Answer Content */}
-                <div className="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4 mb-6">
-                  <div className="prose prose-neutral dark:prose-invert max-w-none">
-                    <ReactMarkdown>{result.answer}</ReactMarkdown>
+                <div className="bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-800 rounded-xl p-6 mb-6 border border-neutral-200 dark:border-neutral-700">
+                  <div className="prose prose-neutral dark:prose-invert max-w-none text-neutral-800 dark:text-neutral-100">
+                    <ReactMarkdown>
+                      {result.answer}
+                    </ReactMarkdown>
                   </div>
                   <button
                     onClick={() => copyToClipboard(result.answer)}
-                    className="mt-3 p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
+                    className="mt-4 p-2.5 rounded-lg bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100 transition-all duration-200"
+                    title="Copy to clipboard"
                   >
                     <Copy className="w-4 h-4" />
                   </button>

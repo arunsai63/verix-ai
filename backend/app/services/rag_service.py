@@ -6,6 +6,7 @@ from langchain.chains import LLMChain
 from app.core.config import settings
 from app.services.ai_providers import AIProviderFactory
 import json
+from sentence_transformers import CrossEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -13,12 +14,13 @@ logger = logging.getLogger(__name__)
 class RAGService:
     """Retrieval-Augmented Generation service for answer generation."""
     
-    def __init__(self):
+    def __init__(self, cross_encoder_model: str = 'cross-encoder/ms-marco-MiniLM-L-6-v2'):
         provider = AIProviderFactory.get_provider()
         self.llm = provider.get_chat_model(
-            temperature=0.3,
-            max_tokens=2000
+            temperature=0.1, # Lower temperature for more factual answers
+            max_tokens=4096 # Increase max tokens for more comprehensive answers
         )
+        self.cross_encoder = CrossEncoder(cross_encoder_model)
         
         self.role_prompts = {
             "doctor": {
@@ -40,12 +42,37 @@ class RAGService:
                 "tone": "professional, clear, actionable"
             },
             "general": {
-                "system": """You are an AI assistant helping analyze documents and provide accurate, well-cited answers.
-                Be clear, concise, and always provide sources for your information.""",
-                "tone": "clear, helpful, informative"
+                "system": """You are a highly advanced AI assistant. Your goal is to provide the most accurate and comprehensive answer possible based on the provided context. 
+                Analyze the context thoroughly, synthesize the information, and present it in a clear, well-structured manner. 
+                Always cite your sources using [Source N] format where N is the source number.""",
+                "tone": "analytical, comprehensive, precise"
             }
         }
-    
+
+    async def _expand_query(self, query: str) -> str:
+        """Expand the user's query with related terms and concepts."""
+        prompt = """You are a query expansion expert. Your task is to expand the following user query to improve retrieval accuracy. 
+        Generate a new query that is a more detailed and comprehensive version of the original. 
+        Include synonyms, related concepts, and rephrase the query to be more specific. 
+        Original query: {query}
+        Expanded query:"""
+        
+        expanded_query = await self.llm.apredict(prompt.format(query=query))
+        return expanded_query.strip()
+
+    def _rerank_results(self, query: str, search_results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Rerank search results using a CrossEncoder model."""
+        if not search_results:
+            return []
+
+        pairs = [[query, result['content']] for result in search_results]
+        scores = self.cross_encoder.predict(pairs)
+
+        for result, score in zip(search_results, scores):
+            result['rerank_score'] = score
+
+        return sorted(search_results, key=lambda x: x['rerank_score'], reverse=True)
+
     async def generate_answer(
         self,
         query: str,
@@ -53,7 +80,7 @@ class RAGService:
         role: str = "general"
     ) -> Dict[str, Any]:
         """
-        Generate an answer based on retrieved documents.
+        Generate an answer based on retrieved and reranked documents.
         
         Args:
             query: User's question
@@ -71,8 +98,15 @@ class RAGService:
                     "highlights": [],
                     "confidence": "low"
                 }
+
+            # 1. Expand the query
+            expanded_query = await self._expand_query(query)
+
+            # 2. Rerank the search results
+            reranked_results = self._rerank_results(expanded_query, search_results)
             
-            context = self._prepare_context(search_results)
+            # 3. Prepare context from top N reranked results
+            context = self._prepare_context(reranked_results)
             
             role_config = self.role_prompts.get(role, self.role_prompts["general"])
             
@@ -82,7 +116,7 @@ class RAGService:
                 prompt, query, context, role_config["tone"]
             )
             
-            parsed_response = self._parse_response(response, search_results)
+            parsed_response = self._parse_response(response, reranked_results)
             
             if role != "general":
                 parsed_response["disclaimer"] = self._get_disclaimer(role)
@@ -99,18 +133,23 @@ class RAGService:
                 "confidence": "error"
             }
     
-    def _prepare_context(self, search_results: List[Dict[str, Any]]) -> str:
-        """Prepare context from search results."""
+    def _prepare_context(self, search_results: List[Dict[str, Any]], max_context_size: int = 8000) -> str:
+        """Prepare context from search results, prioritizing higher-ranked results."""
         context_parts = []
+        total_size = 0
         
-        for idx, result in enumerate(search_results[:5], 1):
+        for idx, result in enumerate(search_results, 1):
             source = result["metadata"].get("filename", "Unknown")
             chunk_index = result["metadata"].get("chunk_index", 0)
             content = result.get("full_content", result["content"])
             
-            context_parts.append(
-                f"[Source {idx}] {source} (Chunk {chunk_index}):\n{content}\n"
-            )
+            result_text = f"[Source {idx}] {source} (Chunk {chunk_index}):\n{content}\n"
+            
+            if total_size + len(result_text) > max_context_size:
+                break
+
+            context_parts.append(result_text)
+            total_size += len(result_text)
         
         return "\n---\n".join(context_parts)
     
@@ -118,9 +157,9 @@ class RAGService:
         """Create the prompt template."""
         system_template = SystemMessagePromptTemplate.from_template(system_message)
         
-        human_template = """Based on the following context, please answer the question. 
+        human_template = """Based on the following context, please provide a comprehensive and accurate answer to the question. 
+        Synthesize information from multiple sources. If the context does not contain the answer, state that clearly.
         Always cite your sources using [Source N] format where N is the source number.
-        If you're not confident about something, say so.
         
         Context:
         {context}
@@ -129,10 +168,10 @@ class RAGService:
         
         Please format your response as JSON with the following structure:
         {{
-            "answer": "Your detailed answer with [Source N] citations",
-            "highlights": ["Key point 1 with citation", "Key point 2 with citation"],
+            "answer": "Your detailed answer with [Source N] citations. Synthesize information from multiple sources to provide a comprehensive response.",
+            "highlights": ["Key insight 1 with citation [Source N]", "Key insight 2 with citation [Source N]"],
             "confidence": "high/medium/low",
-            "suggested_followup": "Optional suggested follow-up question"
+            "suggested_followup": "A relevant follow-up question based on the context."
         }}
         
         Tone: {tone}
@@ -152,13 +191,20 @@ class RAGService:
         """Generate response using LLM."""
         chain = LLMChain(llm=self.llm, prompt=prompt)
         
-        response = await chain.arun(
-            query=query,
-            context=context,
-            tone=tone
-        )
+        response = await chain.ainvoke({
+            "query": query,
+            "context": context,
+            "tone": tone
+        })
         
-        return response
+        # Handle different response types properly
+        if isinstance(response, dict):
+            return response.get('text', str(response))
+        elif isinstance(response, (list, tuple)):
+            # If it's a tuple or list, convert to string
+            return str(response[0]) if response else ""
+        else:
+            return str(response)
     
     def _parse_response(
         self,
@@ -170,20 +216,18 @@ class RAGService:
             parsed = json.loads(response)
             
             citations = []
-            # Always include top search results as citations, not just mentioned ones
-            for idx, result in enumerate(search_results[:5], 1):
-                # Check if this source was mentioned in the answer
+            # Use the reranked search results for citations
+            for idx, result in enumerate(search_results, 1):
                 is_mentioned = f"[Source {idx}]" in parsed.get("answer", "")
                 
-                # Add citation for all top results to ensure we always have citations
                 citations.append({
                     "source_number": idx,
                     "filename": result["metadata"].get("filename", "Unknown"),
                     "dataset": result["metadata"].get("dataset_name", "Unknown"),
                     "chunk_index": result["metadata"].get("chunk_index", 0),
-                    "snippet": result["content"][:200] + "..." if len(result["content"]) > 200 else result["content"],
-                    "relevance_score": result.get("score", 0),
-                    "mentioned_in_answer": is_mentioned  # Track if it was actually cited
+                    "snippet": result["content"][:300] + "..." if len(result["content"]) > 300 else result["content"],
+                    "relevance_score": result.get("rerank_score", result.get("score", 0)),
+                    "mentioned_in_answer": is_mentioned
                 })
             
             return {
@@ -195,17 +239,16 @@ class RAGService:
             }
             
         except json.JSONDecodeError:
-            # If JSON parsing fails, still provide citations from search results
             citations = []
-            for idx, result in enumerate(search_results[:5], 1):
+            for idx, result in enumerate(search_results, 1):
                 citations.append({
                     "source_number": idx,
                     "filename": result["metadata"].get("filename", "Unknown"),
                     "dataset": result["metadata"].get("dataset_name", "Unknown"),
                     "chunk_index": result["metadata"].get("chunk_index", 0),
-                    "snippet": result["content"][:200] + "..." if len(result["content"]) > 200 else result["content"],
-                    "relevance_score": result.get("score", 0),
-                    "mentioned_in_answer": False  # Can't determine without parsed response
+                    "snippet": result["content"][:300] + "..." if len(result["content"]) > 300 else result["content"],
+                    "relevance_score": result.get("rerank_score", result.get("score", 0)),
+                    "mentioned_in_answer": False
                 })
             
             return {

@@ -68,8 +68,13 @@ class VectorStoreService:
             langchain_docs = []
             doc_ids = []
             
+            logger.info(f"Adding {len(documents)} documents to dataset: {dataset_name}")
+            
             for doc in documents:
-                for chunk in doc.get("chunks", []):
+                chunks = doc.get("chunks", [])
+                logger.info(f"Processing document with {len(chunks)} chunks")
+                
+                for chunk in chunks:
                     metadata = {
                         **chunk["metadata"],
                         "dataset_name": dataset_name,
@@ -83,14 +88,23 @@ class VectorStoreService:
                     langchain_docs.append(langchain_doc)
             
             if langchain_docs:
+                logger.info(f"Adding {len(langchain_docs)} chunks to vector store for dataset: {dataset_name}")
                 ids = self.vector_store.add_documents(langchain_docs)
                 doc_ids.extend(ids)
-                logger.info(f"Added {len(langchain_docs)} chunks to vector store")
+                logger.info(f"Successfully added {len(langchain_docs)} chunks with {len(doc_ids)} IDs")
+                
+                # Verify the documents were added
+                collection = self.chroma_client.get_collection(self.collection_name)
+                total_docs = collection.count()
+                logger.info(f"Total documents in collection after addition: {total_docs}")
+            else:
+                logger.warning(f"No chunks to add for dataset: {dataset_name}")
             
             return doc_ids
             
         except Exception as e:
             logger.error(f"Error adding documents to vector store: {str(e)}")
+            logger.error(f"Dataset: {dataset_name}, Documents count: {len(documents)}")
             raise
     
     def search(
@@ -113,9 +127,15 @@ class VectorStoreService:
             List of (Document, relevance_score) tuples
         """
         try:
+            # Log collection size for debugging
+            collection = self.chroma_client.get_collection(self.collection_name)
+            total_docs = collection.count()
+            logger.info(f"Total documents in collection: {total_docs}")
+            
             filter_dict = {}
             if dataset_names:
                 filter_dict["dataset_name"] = {"$in": dataset_names}
+                logger.info(f"Searching in datasets: {dataset_names}")
             
             # Try without score threshold first to debug
             results = self.vector_store.similarity_search_with_relevance_scores(
@@ -125,10 +145,18 @@ class VectorStoreService:
             )
             
             logger.info(f"Search returned {len(results)} results for query: {query[:50]}...")
+            
+            # Log first result if available for debugging
+            if results:
+                first_doc, score = results[0]
+                logger.info(f"Top result score: {score}, dataset: {first_doc.metadata.get('dataset_name')}")
+            
             return results
             
         except Exception as e:
             logger.error(f"Error searching vector store: {str(e)}")
+            # Log more details about the error
+            logger.error(f"Query: {query}, Datasets: {dataset_names}, k: {k}")
             raise
     
     def hybrid_search(

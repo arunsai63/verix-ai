@@ -6,6 +6,7 @@ import logging
 from markitdown import MarkItDown
 from datetime import datetime
 import json
+from semantic_text_splitter import TextSplitter
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,8 @@ class DocumentProcessor:
             '.pdf', '.docx', '.pptx', '.html', '.txt', '.md', 
             '.csv', '.xlsx', '.xml', '.rtf', '.odt', '.epub'
         ]
-    
+        self.splitter = TextSplitter()
+
     def process_file(
         self,
         file_path: str,
@@ -118,71 +120,28 @@ class DocumentProcessor:
     def _chunk_document(
         self,
         content: str,
-        metadata: Dict[str, Any],
-        chunk_size: int = 1000,
-        chunk_overlap: int = 200
+        metadata: Dict[str, Any]
     ) -> List[Dict[str, Any]]:
         """
-        Split document into chunks for embedding and retrieval.
+        Split document into chunks for embedding and retrieval using semantic splitting.
         
         Args:
             content: The document content to chunk
             metadata: Metadata to attach to each chunk
-            chunk_size: Target size for each chunk in characters
-            chunk_overlap: Number of characters to overlap between chunks
             
         Returns:
             List of chunks with metadata
         """
         chunks = []
-        lines = content.split('\n')
-        current_chunk = []
-        current_size = 0
-        chunk_index = 0
+        split_chunks = self.splitter.chunks(content, 1000)  # 1000 characters per chunk
         
-        for line in lines:
-            line_size = len(line)
-            
-            if current_size + line_size > chunk_size and current_chunk:
-                chunk_text = '\n'.join(current_chunk)
-                chunks.append({
-                    "content": chunk_text,
-                    "metadata": {
-                        **metadata,
-                        "chunk_index": chunk_index,
-                        "chunk_size": len(chunk_text),
-                        "start_char": sum(len(c["content"]) for c in chunks),
-                    }
-                })
-                
-                if chunk_overlap > 0:
-                    overlap_lines = []
-                    overlap_size = 0
-                    for line in reversed(current_chunk):
-                        overlap_size += len(line)
-                        if overlap_size >= chunk_overlap:
-                            break
-                        overlap_lines.insert(0, line)
-                    current_chunk = overlap_lines
-                    current_size = overlap_size
-                else:
-                    current_chunk = []
-                    current_size = 0
-                
-                chunk_index += 1
-            
-            current_chunk.append(line)
-            current_size += line_size
-        
-        if current_chunk:
-            chunk_text = '\n'.join(current_chunk)
+        for i, chunk_text in enumerate(split_chunks):
             chunks.append({
                 "content": chunk_text,
                 "metadata": {
                     **metadata,
-                    "chunk_index": chunk_index,
+                    "chunk_index": i,
                     "chunk_size": len(chunk_text),
-                    "start_char": sum(len(c["content"]) for c in chunks),
                 }
             })
         

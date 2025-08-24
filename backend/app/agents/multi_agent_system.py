@@ -5,6 +5,7 @@ from enum import Enum
 from dataclasses import dataclass
 from app.services.vector_store import VectorStoreService
 from app.services.rag_service import RAGService
+from app.services.advanced_rag_service import AdvancedRAGService, RetrievalConfig
 from app.services.async_document_processor import AsyncDocumentProcessor
 
 logger = logging.getLogger(__name__)
@@ -330,28 +331,47 @@ class RankingAgent(BaseAgent):
 
 
 class SummarizationAgent(BaseAgent):
-    """Agent responsible for generating summaries and answers."""
+    """Agent responsible for generating summaries and answers using advanced RAG."""
     
-    def __init__(self):
+    def __init__(self, use_advanced: bool = True):
         super().__init__("SummarizationAgent", AgentRole.SUMMARIZATION)
-        self.rag_service = RAGService()
+        
+        # Configure advanced RAG for maximum accuracy
+        if use_advanced:
+            config = RetrievalConfig(
+                use_hybrid_search=True,
+                use_query_expansion=True,
+                use_multi_query=True,
+                use_reranking=True,
+                use_contextual_compression=True,
+                max_context_length=15000,  # Larger context for better accuracy
+                top_k_initial=30,  # Get more initial results
+                top_k_reranked=15,  # Keep more after reranking
+                min_relevance_score=0.2  # Lower threshold to include more context
+            )
+            self.rag_service = AdvancedRAGService(config=config)
+            logger.info("Using Advanced RAG Service with full accuracy features")
+        else:
+            self.rag_service = RAGService()
+            logger.info("Using Standard RAG Service")
     
     async def execute_task(self, task_data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Generate answer with citations.
+        Generate answer with citations using advanced RAG techniques.
         
         Args:
-            task_data: Contains query, results, role
+            task_data: Contains query, results, role, dataset_names
             
         Returns:
-            Generated answer
+            Generated answer with enhanced metadata
         """
         try:
             query = task_data.get("query")
             results = task_data.get("results", [])
             role = task_data.get("role", "general")
+            dataset_names = task_data.get("dataset_names")
             
-            logger.info(f"{self.name}: Generating answer for role: {role}")
+            logger.info(f"{self.name}: Generating answer using Advanced RAG for role: {role}")
             
             # Format results for RAG service
             formatted_results = []
@@ -363,11 +383,20 @@ class SummarizationAgent(BaseAgent):
                     "full_content": result.get("content")
                 })
             
-            answer = await self.rag_service.generate_answer(
-                query, 
-                formatted_results, 
-                role
-            )
+            # Use advanced RAG if available
+            if isinstance(self.rag_service, AdvancedRAGService):
+                answer = await self.rag_service.generate_answer(
+                    query, 
+                    formatted_results, 
+                    role,
+                    dataset_names
+                )
+            else:
+                answer = await self.rag_service.generate_answer(
+                    query, 
+                    formatted_results, 
+                    role
+                )
             
             return {
                 "status": "success",
@@ -585,7 +614,8 @@ class MultiAgentOrchestrator:
             summarization_task = {
                 "query": query,
                 "results": ranking_result.get("ranked_results", retrieval_result["results"][:k]),
-                "role": role
+                "role": role,
+                "dataset_names": dataset_names  # Pass dataset names for advanced RAG
             }
             
             answer_result = await self.agents[AgentRole.SUMMARIZATION].execute_task(summarization_task)

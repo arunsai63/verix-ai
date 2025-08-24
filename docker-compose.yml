@@ -140,7 +140,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: verixai-celery
-    command: celery -A app.celery_app worker --loglevel=info --concurrency=4 --queues=default,documents
+    command: celery -A app.celery_app worker --loglevel=info --concurrency=4 --queues=default,documents,large_documents
     environment:
       DATABASE_URL: postgresql+asyncpg://verixai:verixai_password@postgres:5432/verixai_db
       CHROMA_HOST: chromadb
@@ -173,62 +173,62 @@ services:
     networks:
       - verixai-network
 
-  # Additional Celery worker for large documents
-  celery-large:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: verixai-celery-large
-    command: celery -A app.celery_app worker --loglevel=info --concurrency=2 --queues=large_documents
-    environment:
-      DATABASE_URL: postgresql+asyncpg://verixai:verixai_password@postgres:5432/verixai_db
-      CHROMA_HOST: chromadb
-      CHROMA_PORT: 8000
-      REDIS_URL: redis://redis:6379/0
-      CELERY_BROKER_URL: redis://redis:6379/0
-      CELERY_RESULT_BACKEND: redis://redis:6379/0
-      LLM_PROVIDER: ${LLM_PROVIDER:-ollama}
-      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-ollama}
-      OLLAMA_BASE_URL: http://ollama:11434
-      OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-llama3.2:1b}
-      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
-      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
-      MULTI_AGENT_ENABLED: ${MULTI_AGENT_ENABLED:-true}
-      MAX_PARALLEL_DOCUMENTS: ${MAX_PARALLEL_DOCUMENTS:-2}
-      MAX_PARALLEL_CHUNKS: ${MAX_PARALLEL_CHUNKS:-5}
-    volumes:
-      - ./backend:/app
-      - ./uploads:/app/uploads
-      - ./datasets:/app/datasets
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      chromadb:
-        condition: service_started
-      ollama:
-        condition: service_healthy
-    networks:
-      - verixai-network
+  # # Additional Celery worker for large documents (consolidated into main celery worker)
+  # celery-large:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   container_name: verixai-celery-large
+  #   command: celery -A app.celery_app worker --loglevel=info --concurrency=2 --queues=large_documents
+  #   environment:
+  #     DATABASE_URL: postgresql+asyncpg://verixai:verixai_password@postgres:5432/verixai_db
+  #     CHROMA_HOST: chromadb
+  #     CHROMA_PORT: 8000
+  #     REDIS_URL: redis://redis:6379/0
+  #     CELERY_BROKER_URL: redis://redis:6379/0
+  #     CELERY_RESULT_BACKEND: redis://redis:6379/0
+  #     LLM_PROVIDER: ${LLM_PROVIDER:-ollama}
+  #     EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-ollama}
+  #     OLLAMA_BASE_URL: http://ollama:11434
+  #     OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-llama3.2:1b}
+  #     OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
+  #     SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+  #     MULTI_AGENT_ENABLED: ${MULTI_AGENT_ENABLED:-true}
+  #     MAX_PARALLEL_DOCUMENTS: ${MAX_PARALLEL_DOCUMENTS:-2}
+  #     MAX_PARALLEL_CHUNKS: ${MAX_PARALLEL_CHUNKS:-5}
+  #   volumes:
+  #     - ./backend:/app
+  #     - ./uploads:/app/uploads
+  #     - ./datasets:/app/datasets
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #     chromadb:
+  #       condition: service_started
+  #     ollama:
+  #       condition: service_healthy
+  #   networks:
+  #     - verixai-network
 
-  # Flower - Celery monitoring tool
-  flower:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: verixai-flower
-    command: celery -A app.celery_app flower --port=5555 --broker=redis://redis:6379/0
-    environment:
-      CELERY_BROKER_URL: redis://redis:6379/0
-      CELERY_RESULT_BACKEND: redis://redis:6379/0
-    ports:
-      - "5555:5555"
-    depends_on:
-      - redis
-      - celery
-    networks:
-      - verixai-network
+  # # Flower - Celery monitoring tool (commented out as requested)
+  # flower:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   container_name: verixai-flower
+  #   command: celery -A app.celery_app flower --port=5555 --broker=redis://redis:6379/0
+  #   environment:
+  #     CELERY_BROKER_URL: redis://redis:6379/0
+  #     CELERY_RESULT_BACKEND: redis://redis:6379/0
+  #   ports:
+  #     - "5555:5555"
+  #   depends_on:
+  #     - redis
+  #     - celery
+  #   networks:
+  #     - verixai-network
 
   # Frontend React App with Vite
   frontend:
