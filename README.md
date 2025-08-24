@@ -24,6 +24,9 @@ Whether you're a doctor reviewing patient histories, a lawyer researching case l
 ---
 
 ## 🚀 Live Demo & Screenshots
+
+**✨ [Check out the live demo here!](https://arunsai63.github.io/verix-ai/) ✨**
+
 <img width="1538" height="771" alt="image" src="https://github.com/user-attachments/assets/a534bb5b-b078-4af9-a38b-0f2d0b727189" />
 
 

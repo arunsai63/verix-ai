@@ -221,10 +221,19 @@ class VectorStoreService:
             True if successful, False otherwise
         """
         try:
-            self.vector_store.delete(
+            # First, get all document IDs for this dataset
+            collection = self.chroma_client.get_collection(self.collection_name)
+            results = collection.get(
                 where={"dataset_name": dataset_name}
             )
-            logger.info(f"Deleted dataset: {dataset_name}")
+            
+            if results and results["ids"]:
+                # Delete using the IDs
+                collection.delete(ids=results["ids"])
+                logger.info(f"Deleted {len(results['ids'])} documents from dataset: {dataset_name}")
+            else:
+                logger.info(f"No documents found for dataset: {dataset_name}")
+            
             return True
             
         except Exception as e:
