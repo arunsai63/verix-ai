@@ -122,7 +122,7 @@ const QuerySection: React.FC<QuerySectionProps> = ({
       </div>
 
       {/* Query Form */}
-      <Card variant="gradient" glow>
+      <Card variant="default" className="!bg-neutral-900">
         <div className="p-8 space-y-6">
           {/* Dataset Selection */}
           <div>
@@ -136,7 +136,7 @@ const QuerySection: React.FC<QuerySectionProps> = ({
                 const selected = Array.from(e.target.selectedOptions, option => option.value);
                 setSelectedDatasets(selected);
               }}
-              className="w-full px-4 py-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent min-h-[100px]"
+              className="w-full px-4 py-3 rounded-xl border border-neutral-700 bg-neutral-800 text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent min-h-[100px] font-medium"
             >
               {datasets.map((dataset) => (
                 <option key={dataset.name} value={dataset.name}>
@@ -182,7 +182,7 @@ const QuerySection: React.FC<QuerySectionProps> = ({
                 <button
                   key={index}
                   onClick={() => setQuery(example)}
-                  className="px-3 py-1.5 text-sm rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:border-primary-400 dark:hover:border-primary-600 transition-all"
+                  className="px-3 py-1.5 text-sm rounded-lg border border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-primary-500 hover:text-primary-400 transition-colors"
                 >
                   {example}
                 </button>

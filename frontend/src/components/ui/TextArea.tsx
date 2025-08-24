@@ -24,11 +24,11 @@ const TextArea: React.FC<TextAreaProps> = ({
         className={`
           w-full px-4 py-3 rounded-xl border transition-all duration-200
           bg-white dark:bg-neutral-800
-          text-neutral-900 dark:text-neutral-100
-          placeholder:text-neutral-500 dark:placeholder:text-neutral-400
+          text-neutral-900 dark:text-neutral-100 font-medium
+          placeholder:text-neutral-400 dark:placeholder:text-neutral-500
           ${error 
-            ? 'border-error-500 dark:border-error-400 focus:ring-error-500' 
-            : 'border-neutral-300 dark:border-neutral-700 focus:ring-primary-500'
+            ? 'border-error-500 focus:ring-error-500' 
+            : 'border-neutral-300 dark:border-neutral-700 focus:ring-primary-500 focus:border-primary-500'
           }
           focus:outline-none focus:ring-2 focus:border-transparent
           disabled:opacity-50 disabled:cursor-not-allowed

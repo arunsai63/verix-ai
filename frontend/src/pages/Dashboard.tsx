@@ -20,6 +20,8 @@ import {
 import UploadSection from '../components/UploadSection';
 import QuerySection from '../components/QuerySection';
 import DatasetsSection from '../components/DatasetsSection';
+import SettingsPage from './Settings';
+import HelpPage from './Help';
 import { Dataset, QueryResult } from '../types';
 import api from '../services/api';
 import Button from '../components/ui/Button';
@@ -40,7 +42,7 @@ const Dashboard: React.FC = () => {
     message: '',
     type: 'info',
   });
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -112,7 +114,7 @@ const Dashboard: React.FC = () => {
               className="w-64 bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 flex flex-col"
             >
               {/* Logo */}
-              <div className="p-6 border-b border-neutral-200 dark:border-neutral-800">
+              <div className="p-6 border-b border-neutral-200 dark:border-neutral-800" onClick={() => navigate('/dashboard')}>
                 <div className="flex items-center space-x-3">
                   <motion.div
                     whileHover={{ rotate: 360 }}
@@ -136,10 +138,9 @@ const Dashboard: React.FC = () => {
                     to={item.path}
                     end={item.exact}
                     className={({ isActive }) =>
-                      `flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                        isActive
-                          ? 'bg-gradient-to-r from-primary-500/10 to-accent-500/10 text-primary-600 dark:text-primary-400 font-medium'
-                          : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                      `flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
+                        ? 'bg-gradient-to-r from-primary-500/10 to-accent-500/10 text-primary-600 dark:text-primary-400 font-medium'
+                        : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                       }`
                     }
                   >
@@ -165,10 +166,9 @@ const Dashboard: React.FC = () => {
                     key={item.path}
                     to={item.path}
                     className={({ isActive }) =>
-                      `flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                        isActive
-                          ? 'bg-neutral-100 dark:bg-neutral-800 text-primary-600 dark:text-primary-400'
-                          : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                      `flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
+                        ? 'bg-neutral-100 dark:bg-neutral-800 text-primary-600 dark:text-primary-400'
+                        : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                       }`
                     }
                   >
@@ -198,12 +198,12 @@ const Dashboard: React.FC = () => {
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Header */}
-          <header className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 px-6 py-4">
+          <header className="bg-neutral-900 border-b border-neutral-800 px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                  className="p-2 rounded-lg hover:bg-neutral-800 transition-colors"
                 >
                   {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                 </button>
@@ -211,15 +211,15 @@ const Dashboard: React.FC = () => {
                   Document Analysis Dashboard
                 </h2>
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => setDarkMode(!darkMode)}
-                  className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                  className="p-2 rounded-lg hover:bg-neutral-800 transition-colors"
                 >
                   {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </button>
-                
+
                 <button className="relative p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
                   <Bell className="w-5 h-5" />
                   <span className="absolute top-1 right-1 w-2 h-2 bg-error-500 rounded-full"></span>
@@ -229,7 +229,7 @@ const Dashboard: React.FC = () => {
           </header>
 
           {/* Main Content Area */}
-          <main className="flex-1 overflow-auto bg-neutral-50 dark:bg-neutral-950 p-6">
+          <main className="flex-1 overflow-auto bg-neutral-950 p-6">
             <AnimatePresence mode="wait">
               {notification.open && (
                 <motion.div
@@ -302,7 +302,7 @@ const Dashboard: React.FC = () => {
 const DashboardOverview: React.FC<{ datasets: Dataset[] }> = ({ datasets }) => {
   const totalDocuments = datasets.reduce((acc, dataset) => acc + dataset.document_count, 0);
   const totalSize = datasets.reduce((acc, dataset) => acc + dataset.size_bytes, 0);
-  
+
   const formatBytes = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -340,7 +340,7 @@ const DashboardOverview: React.FC<{ datasets: Dataset[] }> = ({ datasets }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-white dark:bg-neutral-900 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
+            className="bg-neutral-900 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
           >
             <div className="flex items-center justify-between mb-4">
               <div className={`w-12 h-12 bg-${stat.color}-100 dark:bg-${stat.color}-900/30 rounded-xl flex items-center justify-center`}>
@@ -362,7 +362,7 @@ const DashboardOverview: React.FC<{ datasets: Dataset[] }> = ({ datasets }) => {
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-white dark:bg-neutral-900 rounded-2xl p-6 shadow-lg"
+          className="bg-neutral-900 rounded-2xl p-6 shadow-lg"
         >
           <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
           <div className="space-y-3">
@@ -396,7 +396,7 @@ const DashboardOverview: React.FC<{ datasets: Dataset[] }> = ({ datasets }) => {
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-white dark:bg-neutral-900 rounded-2xl p-6 shadow-lg"
+          className="bg-neutral-900 rounded-2xl p-6 shadow-lg"
         >
           <h2 className="text-xl font-semibold mb-4">Recent Datasets</h2>
           {datasets.length > 0 ? (
@@ -404,7 +404,7 @@ const DashboardOverview: React.FC<{ datasets: Dataset[] }> = ({ datasets }) => {
               {datasets.slice(0, 5).map((dataset) => (
                 <div
                   key={dataset.name}
-                  className="flex items-center justify-between p-3 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+                  className="flex items-center justify-between p-3 rounded-xl hover:bg-neutral-800 transition-colors"
                 >
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
@@ -438,32 +438,5 @@ const DashboardOverview: React.FC<{ datasets: Dataset[] }> = ({ datasets }) => {
   );
 };
 
-// Settings Page Component
-const SettingsPage: React.FC = () => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className="max-w-4xl"
-  >
-    <h1 className="text-3xl font-display font-bold mb-6">Settings</h1>
-    <div className="bg-white dark:bg-neutral-900 rounded-2xl p-6 shadow-lg">
-      <p className="text-neutral-600 dark:text-neutral-400">Settings page coming soon...</p>
-    </div>
-  </motion.div>
-);
-
-// Help Page Component
-const HelpPage: React.FC = () => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className="max-w-4xl"
-  >
-    <h1 className="text-3xl font-display font-bold mb-6">Help & Support</h1>
-    <div className="bg-white dark:bg-neutral-900 rounded-2xl p-6 shadow-lg">
-      <p className="text-neutral-600 dark:text-neutral-400">Help documentation coming soon...</p>
-    </div>
-  </motion.div>
-);
 
 export default Dashboard;

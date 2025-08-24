@@ -21,10 +21,10 @@ const Card: React.FC<CardProps> = ({
   const baseStyles = 'rounded-2xl transition-all duration-300';
   
   const variants = {
-    default: 'bg-white shadow-lg border border-neutral-100',
-    glass: 'glass',
-    gradient: 'bg-gradient-to-br from-white/90 to-white/70 backdrop-blur-sm border border-white/50 shadow-xl',
-    outlined: 'bg-transparent border-2 border-neutral-200',
+    default: 'bg-white dark:bg-neutral-900 shadow-lg border border-neutral-200 dark:border-neutral-700',
+    glass: 'bg-white/80 dark:bg-neutral-900/80 backdrop-blur-sm border border-neutral-200 dark:border-neutral-700',
+    gradient: 'bg-gradient-to-br from-white to-neutral-50 dark:from-neutral-900 dark:to-neutral-800 backdrop-blur-sm border border-neutral-200 dark:border-neutral-700 shadow-xl',
+    outlined: 'bg-white/50 dark:bg-neutral-900/50 border-2 border-neutral-300 dark:border-neutral-700',
   };
   
   const hoverStyles = hover ? 'hover:shadow-2xl hover:scale-[1.02]' : '';
@@ -59,7 +59,7 @@ interface CardHeaderProps {
 }
 
 export const CardHeader: React.FC<CardHeaderProps> = ({ children, className }) => (
-  <div className={twMerge('px-6 py-4 border-b border-neutral-100', className)}>
+  <div className={twMerge('px-6 py-4 border-b border-neutral-200 dark:border-neutral-700', className)}>
     {children}
   </div>
 );
@@ -81,7 +81,7 @@ interface CardFooterProps {
 }
 
 export const CardFooter: React.FC<CardFooterProps> = ({ children, className }) => (
-  <div className={twMerge('px-6 py-4 border-t border-neutral-100', className)}>
+  <div className={twMerge('px-6 py-4 border-t border-neutral-200 dark:border-neutral-700', className)}>
     {children}
   </div>
 );

@@ -25,9 +25,9 @@ const Input: React.FC<InputProps> = ({
   const baseStyles = 'w-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent';
   
   const variants = {
-    default: 'bg-white/50 backdrop-blur-sm border border-neutral-300 hover:border-primary-300',
-    filled: 'bg-neutral-100 border border-transparent hover:bg-neutral-200',
-    outlined: 'bg-transparent border-2 border-neutral-300 hover:border-primary-400',
+    default: 'bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 font-medium placeholder:text-neutral-400 dark:placeholder:text-neutral-500',
+    filled: 'bg-neutral-100 dark:bg-neutral-900 border border-transparent text-neutral-900 dark:text-neutral-100 font-medium placeholder:text-neutral-400 dark:placeholder:text-neutral-500',
+    outlined: 'bg-transparent dark:bg-neutral-800/50 border-2 border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 font-medium placeholder:text-neutral-400 dark:placeholder:text-neutral-500',
   };
   
   const sizes = {
@@ -56,7 +56,7 @@ const Input: React.FC<InputProps> = ({
         <motion.label
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          className="block text-sm font-medium text-neutral-700 mb-2"
+          className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2"
         >
           {label}
         </motion.label>

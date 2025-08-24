@@ -165,7 +165,7 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
       </div>
 
       {/* Upload Area */}
-      <Card variant="gradient" glow>
+      <Card variant="default">
         <div className="p-8">
           <div
             {...getRootProps()}
@@ -285,15 +285,15 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
           
           <div className="space-y-4">
             {/* Dataset Option Toggle */}
-            <div className="flex space-x-2 p-1 bg-neutral-100 dark:bg-neutral-800 rounded-xl">
+            <div className="flex space-x-2 p-1 bg-neutral-800 rounded-xl">
               <button
                 onClick={() => setUseExistingDataset(false)}
                 disabled={uploading}
                 className={`
                   flex-1 py-2.5 px-4 rounded-lg font-medium transition-all duration-200
                   ${!useExistingDataset 
-                    ? 'bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-sm' 
-                    : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200'
+                    ? 'bg-neutral-700 text-primary-400 shadow-sm' 
+                    : 'text-neutral-400 hover:text-neutral-200'
                   }
                 `}
               >
@@ -309,8 +309,8 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
                 className={`
                   flex-1 py-2.5 px-4 rounded-lg font-medium transition-all duration-200
                   ${useExistingDataset 
-                    ? 'bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-sm' 
-                    : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200'
+                    ? 'bg-neutral-700 text-primary-400 shadow-sm' 
+                    : 'text-neutral-400 hover:text-neutral-200'
                   }
                   ${datasets.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}
                 `}
@@ -335,7 +335,7 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUploadComplete, dataset
                     value={selectedDataset}
                     onChange={(e) => setSelectedDataset(e.target.value)}
                     disabled={uploading || datasets.length === 0}
-                    className="w-full px-4 py-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-neutral-700 bg-neutral-800 text-neutral-100 font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                   >
                     <option value="">Select a dataset...</option>
                     {datasets.map((dataset) => (

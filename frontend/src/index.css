@@ -17,6 +17,15 @@
   .dark body {
     @apply bg-neutral-950 text-neutral-100;
   }
+  
+  /* Dark theme form elements - only in dark mode */
+  .dark input, .dark textarea, .dark select {
+    @apply bg-neutral-900 text-neutral-100 placeholder-neutral-500 border-neutral-700;
+  }
+  
+  .dark input:focus, .dark textarea:focus, .dark select:focus {
+    @apply bg-neutral-900 border-primary-500 ring-2 ring-primary-500;
+  }
 }
 
 @layer components {

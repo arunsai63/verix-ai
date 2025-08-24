@@ -72,7 +72,7 @@ const LandingPage: React.FC = () => {
               to="/dashboard"
               className="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200"
             >
-              Get Started
+              Dashboard
             </Link>
           </div>
         </div>
@@ -422,18 +422,18 @@ const LandingPage: React.FC = () => {
               </Link>
 
               <div className="mt-8 flex items-center justify-center space-x-8">
-                <div className="flex -space-x-2">
+                {/* <div className="d-none flex -space-x-2">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <div key={i} className="w-10 h-10 rounded-full bg-white/20 backdrop-blur border-2 border-white/30"></div>
                   ))}
-                </div>
+                </div> */}
                 <div className="text-white/90">
-                  <div className="flex items-center space-x-1 mb-1">
+                  {/* <div className="flex items-center space-x-1 mb-1">
                     {[1, 2, 3, 4, 5].map((i) => (
                       <Star key={i} className="w-4 h-4 fill-warning-400 text-warning-400" />
                     ))}
                   </div>
-                  <p className="text-sm">Trusted by 10,000+ users</p>
+                  <p className="text-sm">Trusted by 10,000+ users</p> */}
                 </div>
               </div>
             </div>
