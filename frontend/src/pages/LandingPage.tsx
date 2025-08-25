@@ -19,6 +19,7 @@ import {
   Linkedin,
   Globe
 } from 'lucide-react';
+import InteractiveDemo from '../components/InteractiveDemo';
 
 const LandingPage: React.FC = () => {
   const fadeIn = {
@@ -67,7 +68,7 @@ const LandingPage: React.FC = () => {
             <a href="#features" className="text-neutral-600 hover:text-primary-600 transition-colors">Features</a>
             <a href="#how-it-works" className="text-neutral-600 hover:text-primary-600 transition-colors">How it Works</a>
             <a href="#use-cases" className="text-neutral-600 hover:text-primary-600 transition-colors">Use Cases</a>
-            <a href="#pricing" className="text-neutral-600 hover:text-primary-600 transition-colors">Pricing</a>
+            <a href="#github" className="text-neutral-600 hover:text-primary-600 transition-colors">GitHub</a>
             <Link
               to="/dashboard"
               className="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200"
@@ -100,7 +101,7 @@ const LandingPage: React.FC = () => {
               className="text-5xl lg:text-7xl font-display font-bold mb-6"
             >
               Transform Your Documents Into
-              <span className="block mt-2 gradient-text">Actionable Intelligence</span>
+              <span className="block mt-2 gradient-text break-words">Actionable Intelligence</span>
             </motion.h1>
 
             <motion.p
@@ -123,7 +124,15 @@ const LandingPage: React.FC = () => {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
 
-              <button className="px-8 py-4 bg-white/80 backdrop-blur-sm border-2 border-primary-200 text-primary-600 rounded-xl font-semibold text-lg hover:bg-white hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+              <button 
+                onClick={() => {
+                  const demoSection = document.getElementById('interactive-demo');
+                  if (demoSection) {
+                    demoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+                className="px-8 py-4 bg-white/80 backdrop-blur-sm border-2 border-primary-200 text-primary-600 rounded-xl font-semibold text-lg hover:bg-white hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+              >
                 Watch Demo
               </button>
             </motion.div>
@@ -134,11 +143,11 @@ const LandingPage: React.FC = () => {
             >
               <div className="flex items-center space-x-2">
                 <CheckCircle className="w-5 h-5 text-success-500" />
-                <span>No credit card required</span>
+                <span>Open Source</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Shield className="w-5 h-5 text-primary-500" />
-                <span>Enterprise-grade security</span>
+                <span>Self-hosted solution</span>
               </div>
             </motion.div>
           </motion.div>
@@ -264,8 +273,13 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* Interactive Demo Section */}
+      <section id="interactive-demo" className="px-6 py-20 lg:px-12 lg:py-32 bg-gradient-to-br from-primary-50/50 to-accent-50/30 relative">
+        <InteractiveDemo />
+      </section>
+
       {/* How It Works Section */}
-      <section id="how-it-works" className="px-6 py-20 lg:px-12 lg:py-32 bg-gradient-to-br from-primary-50/50 to-accent-50/30 relative">
+      <section id="how-it-works" className="px-6 py-20 lg:px-12 lg:py-32 relative">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
@@ -411,13 +425,13 @@ const LandingPage: React.FC = () => {
                 Ready to Transform Your Document Workflow?
               </h2>
               <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                Join thousands of professionals who are already saving hours every week with VerixAI
+                Deploy your own intelligent document analysis system with VerixAI
               </p>
               <Link
                 to="/dashboard"
                 className="inline-flex items-center space-x-2 px-8 py-4 bg-white text-primary-600 rounded-xl font-semibold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
               >
-                <span>Get Started Free</span>
+                <span>Get Started Now</span>
                 <ArrowRight className="w-5 h-5" />
               </Link>
 
@@ -453,7 +467,7 @@ const LandingPage: React.FC = () => {
                 <span className="text-xl font-display font-bold">VerixAI</span>
               </div>
               <p className="text-neutral-600 text-sm">
-                AI-powered document intelligence for modern professionals.
+                Open-source AI-powered document intelligence platform.
               </p>
             </div>
 
@@ -461,7 +475,7 @@ const LandingPage: React.FC = () => {
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-neutral-600 text-sm">
                 <li><a href="#" className="hover:text-primary-600 transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-primary-600 transition-colors">Pricing</a></li>
+                <li><a href="https://github.com/yourusername/verix-ai" className="hover:text-primary-600 transition-colors">GitHub</a></li>
                 <li><a href="#" className="hover:text-primary-600 transition-colors">API Docs</a></li>
                 <li><a href="#" className="hover:text-primary-600 transition-colors">Changelog</a></li>
               </ul>

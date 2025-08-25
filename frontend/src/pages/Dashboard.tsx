@@ -186,7 +186,7 @@ const Dashboard: React.FC = () => {
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">User</p>
-                    <p className="text-xs text-neutral-500">Free Plan</p>
+                    <p className="text-xs text-neutral-500">Local Instance</p>
                   </div>
                   <LogOut className="w-4 h-4 text-neutral-400" />
                 </div>

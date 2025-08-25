@@ -39,6 +39,41 @@ Whether you're a doctor reviewing patient histories, a lawyer researching case l
 
 ---
 
+## 🗺️ Roadmap
+
+### Phase 1: Core Enhancements (Q1 2025)
+- [ ] **Multi-LLM Support**: Add support for Claude, Gemini, and local models (Ollama)
+- [ ] **Advanced Document Processing**: OCR support for scanned documents
+- [ ] **Real-time Collaboration**: Multiple users working on same dataset
+- [ ] **Export Functionality**: Export Q&A sessions as reports (PDF/Word)
+
+### Phase 2: Intelligence Features (Q2 2025)
+- [ ] **Document Comparison**: Compare and contrast multiple documents
+- [ ] **Auto-summarization**: Automatic executive summaries for uploaded documents
+- [ ] **Knowledge Graph**: Visual representation of document relationships
+- [ ] **Custom Embeddings**: Fine-tune embeddings for specific domains
+
+### Phase 3: Enterprise Features (Q3 2025)
+- [ ] **SSO Integration**: SAML/OAuth support for enterprise authentication
+- [ ] **Audit Logging**: Complete audit trail for compliance
+- [ ] **API Rate Limiting**: Advanced rate limiting and usage analytics
+- [ ] **Multi-tenancy**: Support for multiple isolated organizations
+
+### Phase 4: Advanced Analytics (Q4 2025)
+- [ ] **Sentiment Analysis**: Analyze document sentiment and tone
+- [ ] **Entity Recognition**: Extract and link named entities
+- [ ] **Time-series Analysis**: Track changes across document versions
+- [ ] **Custom Models**: Support for domain-specific fine-tuned models
+
+### Community Contributions Welcome!
+We encourage contributions in these areas:
+- Additional file format support (epub, rtf, etc.)
+- Language translations and internationalization
+- Performance optimizations
+- Bug fixes and documentation improvements
+
+---
+
 ## 🛠️ Tech Stack & Architecture
 
 VerixAI is built with a modern, microservices-oriented architecture.

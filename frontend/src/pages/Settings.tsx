@@ -88,7 +88,7 @@ const Settings: React.FC = () => {
                 <Input
                   label="Organization"
                   placeholder="Acme Corp"
-                  defaultValue="Free Plan"
+                  defaultValue="Local Instance"
                 />
               </div>
             </div>
@@ -288,31 +288,31 @@ const Settings: React.FC = () => {
             </div>
           </Card>
 
-          {/* Plan Info */}
+          {/* System Info */}
           <Card variant="gradient">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-                  Current Plan
+                  System Info
                 </h3>
-                <Badge variant="primary">Free</Badge>
+                <Badge variant="primary">Self-Hosted</Badge>
               </div>
               <div className="space-y-2 mb-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-neutral-600 dark:text-neutral-400">Documents</span>
-                  <span className="text-neutral-900 dark:text-neutral-100">10 / 100</span>
+                  <span className="text-neutral-900 dark:text-neutral-100">Unlimited</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-neutral-600 dark:text-neutral-400">Queries</span>
-                  <span className="text-neutral-900 dark:text-neutral-100">50 / 1000</span>
+                  <span className="text-neutral-900 dark:text-neutral-100">Unlimited</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-neutral-600 dark:text-neutral-400">Storage</span>
-                  <span className="text-neutral-900 dark:text-neutral-100">100 MB / 1 GB</span>
+                  <span className="text-neutral-900 dark:text-neutral-100">Local Storage</span>
                 </div>
               </div>
               <Button variant="primary" size="sm" className="w-full">
-                Upgrade Plan
+                View Documentation
               </Button>
             </div>
           </Card>
