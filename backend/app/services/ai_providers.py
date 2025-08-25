@@ -255,3 +255,6 @@ class AIProviderFactory:
     def list_providers(cls) -> List[str]:
         """List available providers."""
         return list(cls._providers.keys())
+
+def get_llm_provider():
+    return AIProviderFactory.get_provider()

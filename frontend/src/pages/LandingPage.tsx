@@ -17,7 +17,10 @@ import {
   Github,
   Twitter,
   Linkedin,
-  Globe
+  Globe,
+  BookOpen,
+  MessageCircle,
+  LineChart
 } from 'lucide-react';
 import InteractiveDemo from '../components/InteractiveDemo';
 
@@ -68,7 +71,7 @@ const LandingPage: React.FC = () => {
             <a href="#features" className="text-neutral-600 hover:text-primary-600 transition-colors">Features</a>
             <a href="#how-it-works" className="text-neutral-600 hover:text-primary-600 transition-colors">How it Works</a>
             <a href="#use-cases" className="text-neutral-600 hover:text-primary-600 transition-colors">Use Cases</a>
-            <a href="#github" className="text-neutral-600 hover:text-primary-600 transition-colors">GitHub</a>
+            <a href="https://github.com/arunsai63/verix-ai" target="_blank" rel="noopener noreferrer" className="text-neutral-600 hover:text-primary-600 transition-colors">GitHub</a>
             <Link
               to="/dashboard"
               className="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200"
@@ -108,8 +111,8 @@ const LandingPage: React.FC = () => {
               variants={fadeIn}
               className="text-xl text-neutral-600 mb-8 leading-relaxed"
             >
-              Upload any document, ask any question, and get instant, accurate answers
-              with precise citations. Built for professionals who need reliable document analysis.
+              Upload documents, chat with them interactively, generate smart summaries, analyze CSV data,
+              and get instant AI-powered answers with precise citations. Built for professionals who need comprehensive document intelligence.
             </motion.p>
 
             <motion.div
@@ -251,6 +254,24 @@ const LandingPage: React.FC = () => {
                 title: "Confidence Scoring",
                 description: "Know how reliable each answer is with our confidence indicators",
                 color: "accent"
+              },
+              {
+                icon: BookOpen,
+                title: "Smart Summarization",
+                description: "Generate executive summaries, key points, or technical breakdowns of any document",
+                color: "success"
+              },
+              {
+                icon: MessageCircle,
+                title: "Chat with Documents",
+                description: "Have interactive conversations with your documents and maintain context across questions",
+                color: "warning"
+              },
+              {
+                icon: LineChart,
+                title: "CSV Analytics",
+                description: "Analyze data with natural language queries and get instant visualizations and insights",
+                color: "primary"
               }
             ].map((feature, index) => (
               <motion.div
@@ -468,6 +489,8 @@ const LandingPage: React.FC = () => {
               </div>
               <p className="text-neutral-600 text-sm">
                 Open-source AI-powered document intelligence platform.
+                <br />
+                <a href="https://arunsai63.github.io/verix-ai/" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 transition-colors text-xs mt-2 inline-block">View Live Demo →</a>
               </p>
             </div>
 
@@ -475,19 +498,19 @@ const LandingPage: React.FC = () => {
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-neutral-600 text-sm">
                 <li><a href="#" className="hover:text-primary-600 transition-colors">Features</a></li>
-                <li><a href="https://github.com/yourusername/verix-ai" className="hover:text-primary-600 transition-colors">GitHub</a></li>
+                <li><a href="https://github.com/arunsai63/verix-ai" target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 transition-colors">GitHub</a></li>
                 <li><a href="#" className="hover:text-primary-600 transition-colors">API Docs</a></li>
                 <li><a href="#" className="hover:text-primary-600 transition-colors">Changelog</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Company</h4>
+              <h4 className="font-semibold mb-4">Developer</h4>
               <ul className="space-y-2 text-neutral-600 text-sm">
-                <li><a href="#" className="hover:text-primary-600 transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-primary-600 transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-primary-600 transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-primary-600 transition-colors">Contact</a></li>
+                <li><a href="https://arunsai63.github.io/portfolio" target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 transition-colors">Portfolio</a></li>
+                <li><a href="https://arunsai63.github.io/blogs" target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 transition-colors">Blogs</a></li>
+                <li><a href="https://arunsai63.github.io/resume.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 transition-colors">Resume</a></li>
+                <li><a href="https://www.linkedin.com/in/arunmunaganti" target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 transition-colors">Contact</a></li>
               </ul>
             </div>
 
@@ -504,19 +527,16 @@ const LandingPage: React.FC = () => {
 
           <div className="border-t border-neutral-200 pt-8 flex flex-col md:flex-row items-center justify-between">
             <p className="text-neutral-600 text-sm mb-4 md:mb-0">
-              © 2025 VerixAI. All rights reserved.
+              © 2025 VerixAI. Built by <a href="https://arunsai63.github.io/" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 transition-colors">Arun Munaganti</a>
             </p>
             <div className="flex items-center space-x-4">
-              <a href="#" className="text-neutral-400 hover:text-primary-600 transition-colors">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-neutral-400 hover:text-primary-600 transition-colors">
+              <a href="https://github.com/arunsai63" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-primary-600 transition-colors">
                 <Github className="w-5 h-5" />
               </a>
-              <a href="#" className="text-neutral-400 hover:text-primary-600 transition-colors">
+              <a href="https://www.linkedin.com/in/arunmunaganti" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-primary-600 transition-colors">
                 <Linkedin className="w-5 h-5" />
               </a>
-              <a href="#" className="text-neutral-400 hover:text-primary-600 transition-colors">
+              <a href="https://arunsai63.github.io/" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-primary-600 transition-colors">
                 <Globe className="w-5 h-5" />
               </a>
             </div>

@@ -86,4 +86,13 @@ export const CardFooter: React.FC<CardFooterProps> = ({ children, className }) =
   </div>
 );
 
+export const CardContent = CardBody;
+export const CardTitle: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
+  <h3 className={twMerge('text-lg font-semibold', className)}>{children}</h3>
+);
+export const CardDescription: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
+  <p className={twMerge('text-sm text-gray-600 dark:text-gray-400', className)}>{children}</p>
+);
+
+export { Card };
 export default Card;

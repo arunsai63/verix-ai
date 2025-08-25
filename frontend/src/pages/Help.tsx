@@ -223,7 +223,7 @@ const Help: React.FC = () => {
           </h2>
           <div className="flex space-x-2">
             {categories.map(category => (
-              <Badge key={category} variant="outline" size="sm">
+              <Badge key={category} variant="secondary" size="sm">
                 {category}
               </Badge>
             ))}
@@ -254,7 +254,7 @@ const Help: React.FC = () => {
                     <h3 className="font-medium text-neutral-900 dark:text-neutral-100">
                       {faq.question}
                     </h3>
-                    <Badge variant="outline" size="sm" className="mt-1">
+                    <Badge variant="secondary" size="sm" className="mt-1">
                       {faq.category}
                     </Badge>
                   </div>

@@ -226,7 +226,7 @@ const DatasetsSection: React.FC<DatasetsSectionProps> = ({
                         {datasetStats[dataset.name].total_chunks} chunks
                       </Badge>
                       {datasetStats[dataset.name].file_types?.map((type: string) => (
-                        <Badge key={type} variant="outline" size="sm">
+                        <Badge key={type} variant="secondary" size="sm">
                           {type}
                         </Badge>
                       ))}

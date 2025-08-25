@@ -10,6 +10,7 @@ interface BadgeProps {
   icon?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
+  onClick?: () => void;
 }
 
 const Badge: React.FC<BadgeProps> = ({
@@ -19,6 +20,7 @@ const Badge: React.FC<BadgeProps> = ({
   icon,
   children,
   className,
+  onClick,
 }) => {
   const baseStyles = 'inline-flex items-center font-medium rounded-full';
   
@@ -53,6 +55,7 @@ const Badge: React.FC<BadgeProps> = ({
       animate={{ scale: 1 }}
       transition={{ type: 'spring', stiffness: 500, damping: 25 }}
       className={classes}
+      onClick={onClick}
     >
       {dot && (
         <span className={clsx(
@@ -66,4 +69,5 @@ const Badge: React.FC<BadgeProps> = ({
   );
 };
 
+export { Badge };
 export default Badge;

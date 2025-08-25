@@ -74,4 +74,9 @@ const Alert: React.FC<AlertProps> = ({
   );
 };
 
+export const AlertDescription: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
+  <div className={className}>{children}</div>
+);
+
+export { Alert };
 export default Alert;

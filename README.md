@@ -19,6 +19,10 @@ Whether you're a doctor reviewing patient histories, a lawyer researching case l
 - **Cited & Verifiable Answers**: Every AI-generated answer is backed by clear citations from the source documents, complete with confidence scores.
 - **Role-Aware Responses**: The system adapts its language and focus based on the selected user role (e.g., Doctor, Lawyer, HR), providing tailored insights and disclaimers.
 - **Dataset Management**: Easily organize documents into distinct, searchable collections for better context isolation and management.
+- **Smart Document Summarization**: Generate executive summaries, key points, chapter-wise breakdowns, or technical abstracts with configurable length and style.
+- **Interactive Chat with Documents**: Have natural conversations with your documents, maintaining context across multiple questions and follow-ups.
+- **CSV Data Analytics**: Analyze CSV files using natural language queries, get instant visualizations, statistical insights, and data transformations.
+- **Multi-Agent Architecture**: Leverages specialized AI agents for document ingestion, retrieval, ranking, summarization, and validation.
 - **Scalable & Asynchronous**: Built with a modern, asynchronous stack (FastAPI, React) and containerized for easy deployment and scaling.
 
 ---
@@ -41,17 +45,24 @@ Whether you're a doctor reviewing patient histories, a lawyer researching case l
 
 ## 🗺️ Roadmap
 
+### Recently Completed ✅
+- [x] **Smart Document Summarization**: Multiple summary types with configurable length
+- [x] **Interactive Chat with Documents**: Context-aware conversations with document collections
+- [x] **CSV Data Analytics**: Natural language data analysis with visualizations
+- [x] **Multi-Agent Architecture**: Specialized agents for different processing tasks
+- [x] **Multi-LLM Support**: Support for Ollama (local models), OpenAI, and Claude
+
 ### Phase 1: Core Enhancements (Q1 2025)
-- [ ] **Multi-LLM Support**: Add support for Claude, Gemini, and local models (Ollama)
 - [ ] **Advanced Document Processing**: OCR support for scanned documents
 - [ ] **Real-time Collaboration**: Multiple users working on same dataset
 - [ ] **Export Functionality**: Export Q&A sessions as reports (PDF/Word)
+- [ ] **Voice Input/Output**: Speech-to-text queries and text-to-speech responses
 
 ### Phase 2: Intelligence Features (Q2 2025)
 - [ ] **Document Comparison**: Compare and contrast multiple documents
-- [ ] **Auto-summarization**: Automatic executive summaries for uploaded documents
 - [ ] **Knowledge Graph**: Visual representation of document relationships
 - [ ] **Custom Embeddings**: Fine-tune embeddings for specific domains
+- [ ] **Advanced Analytics Dashboard**: Usage metrics and insights
 
 ### Phase 3: Enterprise Features (Q3 2025)
 - [ ] **SSO Integration**: SAML/OAuth support for enterprise authentication
@@ -166,5 +177,30 @@ The easiest way to get VerixAI running is with Docker and Docker Compose.
 -   **Doctor**: `"What are the patient's pre-existing conditions and current medications?"`
 -   **Lawyer**: `"Find all precedents related to intellectual property theft in the provided case files."`
 -   **HR**: `"What is the company's official policy on remote work and what are the eligibility criteria?"`
+
+### 🆕 New Features
+
+#### Document Summarization
+Navigate to the "Summarize" tab to generate various types of summaries:
+- **Summary Types**: Executive, Key Points, Chapter-wise, Technical, Bullet Points, Abstract
+- **Length Options**: Brief (1-2 paragraphs), Standard (1 page), Detailed (2-3 pages)
+- **Custom Instructions**: Add specific guidance for the summary generation
+
+#### Interactive Chat
+Use the "Chat" tab for conversational document analysis:
+- Create chat sessions with one or multiple datasets
+- Ask follow-up questions with maintained context
+- View citations and sources for each response
+- Export conversation history as JSON or Markdown
+
+#### CSV Analytics
+Upload CSV files and analyze them using natural language:
+- **Example Queries**:
+  - "What is the average sales by region?"
+  - "Show me the trend of revenue over time"
+  - "Find correlations between variables"
+- **Automatic Visualizations**: Line charts, bar graphs, heatmaps, scatter plots
+- **Statistical Analysis**: Descriptive statistics, correlations, distributions
+- **Data Export**: Download results as JSON, CSV, or HTML reports
 
 ---

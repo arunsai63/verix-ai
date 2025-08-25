@@ -15,11 +15,15 @@ import {
   Sun,
   Moon,
   Bell,
-  User
+  User,
+  BookOpen,
+  MessageCircle
 } from 'lucide-react';
 import UploadSection from '../components/UploadSection';
 import QuerySection from '../components/QuerySection';
 import DatasetsSection from '../components/DatasetsSection';
+import SummarizationSection from '../components/SummarizationSection';
+import ChatSection from '../components/ChatSection';
 import SettingsPage from './Settings';
 import HelpPage from './Help';
 import { Dataset, QueryResult } from '../types';
@@ -92,6 +96,8 @@ const Dashboard: React.FC = () => {
     { path: '/dashboard', icon: Home, label: 'Overview', exact: true },
     { path: '/dashboard/upload', icon: Upload, label: 'Upload' },
     { path: '/dashboard/query', icon: Search, label: 'Query' },
+    { path: '/dashboard/chat', icon: MessageCircle, label: 'Chat' },
+    { path: '/dashboard/summarize', icon: BookOpen, label: 'Summarize' },
     { path: '/dashboard/datasets', icon: Database, label: 'Datasets' },
   ];
 
@@ -277,6 +283,14 @@ const Dashboard: React.FC = () => {
                     previousResult={queryResult}
                   />
                 }
+              />
+              <Route
+                path="/chat"
+                element={<ChatSection datasets={datasets} />}
+              />
+              <Route
+                path="/summarize"
+                element={<SummarizationSection datasets={datasets} />}
               />
               <Route
                 path="/datasets"

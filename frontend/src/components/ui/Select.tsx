@@ -91,4 +91,22 @@ const Select: React.FC<SelectProps> = ({
   );
 };
 
+// Additional exports for compatibility
+export const SelectTrigger: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
+  <div className={className}>{children}</div>
+);
+
+export const SelectContent: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
+  <div className={className}>{children}</div>
+);
+
+export const SelectItem: React.FC<{ value: string; children: React.ReactNode; className?: string }> = ({ children, className }) => (
+  <div className={className}>{children}</div>
+);
+
+export const SelectValue: React.FC<{ placeholder?: string; className?: string }> = ({ placeholder, className }) => (
+  <span className={className}>{placeholder}</span>
+);
+
+export { Select };
 export default Select;
