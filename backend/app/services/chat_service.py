@@ -206,18 +206,27 @@ class ChatService:
         enhanced_query = f"{context}\n\nCurrent question: {message}"
         
         # Search for relevant documents
-        search_results = await self.vector_store.search(
+        search_results_tuples = self.vector_store.search(
             query=enhanced_query,
             dataset_names=session.dataset_names,
             k=10
         )
         
-        if not search_results:
+        if not search_results_tuples:
             return ChatMessage(
                 role=MessageRole.ASSISTANT,
                 content="I couldn't find relevant information in the documents to answer your question. "
                        "Could you please rephrase or provide more context?"
             )
+        
+        # Convert tuples to dictionaries
+        search_results = []
+        for doc, score in search_results_tuples:
+            search_results.append({
+                "content": doc.page_content,
+                "metadata": doc.metadata,
+                "score": score
+            })
         
         # Generate response with citations
         response_text = await self._generate_contextual_response(

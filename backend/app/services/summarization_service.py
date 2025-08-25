@@ -366,19 +366,19 @@ class SummarizationService:
         """Extract citations for summary content"""
         try:
             # Search for relevant chunks that support the summary
-            search_results = await self.vector_store.search(
+            search_results_tuples = self.vector_store.search(
                 query=summary[:1000],  # Use part of summary as query
                 dataset_names=[dataset_name],
                 k=5
             )
             
             citations = []
-            for result in search_results:
+            for doc, score in search_results_tuples:
                 citation = {
-                    "source": result.get("metadata", {}).get("source", document_name),
-                    "page": result.get("metadata", {}).get("page"),
-                    "relevance_score": result.get("score", 0),
-                    "excerpt": result.get("content", "")[:200]
+                    "source": doc.metadata.get("source", document_name),
+                    "page": doc.metadata.get("page"),
+                    "relevance_score": score,
+                    "excerpt": doc.page_content[:200]
                 }
                 citations.append(citation)
             

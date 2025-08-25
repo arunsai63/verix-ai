@@ -3,14 +3,14 @@ from abc import ABC, abstractmethod
 from typing import Dict, Any, List, Optional
 import json
 import httpx
-# from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.chat_models import ChatOllama
 from langchain_community.embeddings import OllamaEmbeddings
-# from langchain_anthropic import ChatAnthropic
+from langchain_anthropic import ChatAnthropic
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.chains import LLMChain
 from langchain.embeddings.base import Embeddings
-from app.core.config import settings
+from ..core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -91,6 +91,22 @@ class BaseLLMProvider(ABC):
     def validate_config(self) -> bool:
         """Validate the provider configuration."""
         pass
+    
+    async def generate(self, prompt: str, temperature: float = 0.3, max_tokens: int = 2000) -> str:
+        """Generate text using the chat model."""
+        chat_model = self.get_chat_model(temperature=temperature, max_tokens=max_tokens)
+        
+        # Create prompt template
+        messages = [
+            HumanMessagePromptTemplate.from_template("{prompt}")
+        ]
+        chat_prompt = ChatPromptTemplate.from_messages(messages)
+        
+        # Create chain and run
+        chain = LLMChain(llm=chat_model, prompt=chat_prompt)
+        response = chain.run(prompt=prompt)
+        
+        return response
 
 
 class OllamaProvider(BaseLLMProvider):

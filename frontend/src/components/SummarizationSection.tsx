@@ -97,7 +97,7 @@ const SummarizationSection: React.FC<SummarizationSectionProps> = ({ datasets })
   };
 
   return (
-    <div className="space-y-6">
+    <div className="dashboard-container space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">

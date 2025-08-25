@@ -240,6 +240,38 @@ class VectorStoreService:
             logger.error(f"Error deleting dataset {dataset_name}: {str(e)}")
             return False
     
+    async def get_dataset_documents(self, dataset_name: str) -> List[Dict[str, Any]]:
+        """
+        Get all documents from a specific dataset.
+        
+        Args:
+            dataset_name: Name of the dataset
+            
+        Returns:
+            List of documents with content and metadata
+        """
+        try:
+            results = self.vector_store.get(
+                where={"dataset_name": dataset_name}
+            )
+            
+            if not results or not results["documents"]:
+                return []
+            
+            documents = []
+            for i, doc_content in enumerate(results["documents"]):
+                documents.append({
+                    "content": doc_content,
+                    "metadata": results["metadatas"][i] if i < len(results["metadatas"]) else {}
+                })
+            
+            logger.info(f"Retrieved {len(documents)} documents from dataset: {dataset_name}")
+            return documents
+            
+        except Exception as e:
+            logger.error(f"Error retrieving documents from dataset {dataset_name}: {str(e)}")
+            return []
+    
     def get_dataset_stats(self, dataset_name: str) -> Dict[str, Any]:
         """
         Get statistics for a specific dataset.

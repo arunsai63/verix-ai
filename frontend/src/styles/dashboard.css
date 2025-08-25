@@ -1,0 +1,267 @@
+/* Dashboard-specific styles - Won't affect landing page */
+
+/* Dashboard wrapper - Apply to all dashboard pages */
+.dashboard-container {
+  @apply bg-gray-900 text-gray-100 min-h-screen;
+}
+
+/* Enhanced text visibility for dashboard */
+.dashboard-container * {
+  color: #e5e7eb !important; /* Force light text */
+}
+
+/* Dashboard headings */
+.dashboard-container h1,
+.dashboard-container h2,
+.dashboard-container h3,
+.dashboard-container h4,
+.dashboard-container h5,
+.dashboard-container h6 {
+  @apply text-white font-semibold;
+}
+
+/* Dashboard paragraphs and text */
+.dashboard-container p,
+.dashboard-container span,
+.dashboard-container div {
+  @apply text-gray-200;
+}
+
+/* Dashboard cards */
+.dashboard-card {
+  @apply bg-gray-800 border border-gray-700 rounded-lg p-4 shadow-lg;
+}
+
+/* Dashboard inputs and textareas */
+.dashboard-container input,
+.dashboard-container textarea,
+.dashboard-container select {
+  @apply bg-gray-800 text-white border border-gray-600 rounded-lg px-4 py-2 
+         focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none
+         placeholder-gray-400;
+}
+
+/* Dashboard buttons */
+.dashboard-btn-primary {
+  @apply bg-blue-600 text-white px-6 py-3 rounded-lg font-medium
+         hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500
+         transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.dashboard-btn-secondary {
+  @apply bg-gray-700 text-white px-6 py-3 rounded-lg font-medium border border-gray-600
+         hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500
+         transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+/* Dashboard navigation */
+.dashboard-nav {
+  @apply bg-gray-800 border-b border-gray-700;
+}
+
+.dashboard-nav-item {
+  @apply text-gray-300 hover:text-white transition-colors duration-200;
+}
+
+.dashboard-nav-item.active {
+  @apply text-blue-400 border-b-2 border-blue-400;
+}
+
+/* Dashboard sidebar */
+.dashboard-sidebar {
+  @apply bg-gray-800 border-r border-gray-700;
+}
+
+.dashboard-sidebar-item {
+  @apply text-gray-300 hover:bg-gray-700 hover:text-white px-4 py-2 rounded-lg
+         transition-all duration-200;
+}
+
+.dashboard-sidebar-item.active {
+  @apply bg-gray-700 text-blue-400;
+}
+
+/* Dashboard notifications and badges */
+.dashboard-notification {
+  @apply bg-gray-700 text-white rounded-lg p-3 border border-gray-600;
+}
+
+.dashboard-badge {
+  @apply bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium;
+}
+
+/* Dashboard tables */
+.dashboard-table {
+  @apply w-full border-collapse;
+}
+
+.dashboard-table th {
+  @apply bg-gray-800 text-white font-medium px-4 py-3 text-left border-b border-gray-700;
+}
+
+.dashboard-table td {
+  @apply text-gray-200 px-4 py-3 border-b border-gray-700;
+}
+
+.dashboard-table tr:hover {
+  @apply bg-gray-700;
+}
+
+/* Dashboard alerts */
+.dashboard-alert {
+  @apply rounded-lg p-4 mb-4;
+}
+
+.dashboard-alert-info {
+  @apply bg-blue-900 text-blue-200 border border-blue-700;
+}
+
+.dashboard-alert-success {
+  @apply bg-green-900 text-green-200 border border-green-700;
+}
+
+.dashboard-alert-warning {
+  @apply bg-yellow-900 text-yellow-200 border border-yellow-700;
+}
+
+.dashboard-alert-error {
+  @apply bg-red-900 text-red-200 border border-red-700;
+}
+
+/* Chat interface specific */
+.chat-message {
+  @apply bg-gray-800 text-gray-100 rounded-lg p-3 mb-2;
+}
+
+.chat-message.user {
+  @apply bg-blue-900 text-blue-100 ml-auto;
+}
+
+.chat-message.assistant {
+  @apply bg-gray-700 text-gray-100;
+}
+
+/* Code blocks in dashboard */
+.dashboard-container pre,
+.dashboard-container code {
+  @apply bg-gray-950 text-gray-200 rounded-md p-2 font-mono;
+}
+
+/* Loading states */
+.dashboard-loading {
+  @apply bg-gray-800 animate-pulse rounded-lg;
+}
+
+/* Tooltips */
+.dashboard-tooltip {
+  @apply bg-gray-950 text-white px-3 py-2 rounded-lg text-sm shadow-lg;
+}
+
+/* Modal overlays */
+.dashboard-modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-75 z-50;
+}
+
+.dashboard-modal {
+  @apply bg-gray-800 rounded-xl shadow-2xl border border-gray-700;
+}
+
+/* Dropdown menus */
+.dashboard-dropdown {
+  @apply bg-gray-800 border border-gray-700 rounded-lg shadow-lg;
+}
+
+.dashboard-dropdown-item {
+  @apply text-gray-200 hover:bg-gray-700 px-4 py-2 transition-colors;
+}
+
+/* Progress bars */
+.dashboard-progress {
+  @apply bg-gray-700 rounded-full overflow-hidden;
+}
+
+.dashboard-progress-bar {
+  @apply bg-blue-600 h-full transition-all duration-300;
+}
+
+/* Fix for icons in navbar */
+.dashboard-container svg {
+  @apply text-gray-300;
+}
+
+.dashboard-container button svg {
+  @apply text-current;
+}
+
+/* Scrollbar styling for dashboard */
+.dashboard-container::-webkit-scrollbar {
+  @apply w-2;
+}
+
+.dashboard-container::-webkit-scrollbar-track {
+  @apply bg-gray-800;
+}
+
+.dashboard-container::-webkit-scrollbar-thumb {
+  @apply bg-gray-600 rounded-full hover:bg-gray-500;
+}
+
+/* Ensure all text is visible */
+.dashboard-container label {
+  @apply text-gray-200 font-medium mb-2 block;
+}
+
+.dashboard-container small {
+  @apply text-gray-400;
+}
+
+/* Fix specific UI components visibility */
+.dashboard-container .text-muted-foreground {
+  @apply text-gray-400 !important;
+}
+
+.dashboard-container .text-foreground {
+  @apply text-gray-100 !important;
+}
+
+.dashboard-container .bg-background {
+  @apply bg-gray-900 !important;
+}
+
+.dashboard-container .bg-card {
+  @apply bg-gray-800 !important;
+}
+
+/* Border overrides handled inline */
+
+/* Session history cards */
+.session-card {
+  @apply bg-gray-800 text-gray-100 rounded-lg p-3 hover:bg-gray-700 transition-colors cursor-pointer;
+  border: 1px solid #374151;
+}
+
+/* Direct content text area */
+.dashboard-container .direct-content-area {
+  @apply bg-gray-800 text-white rounded-lg p-4;
+  border: 1px solid #4b5563;
+}
+
+/* Custom styles for specific components */
+.dashboard-container .summarize-button {
+  @apply bg-gradient-to-r from-blue-600 to-blue-700 text-white;
+}
+
+/* Notification icon fix */
+.notification-icon {
+  @apply text-gray-300 hover:text-white transition-colors;
+}
+
+/* User avatar area */
+.user-avatar {
+  @apply bg-gray-700 text-white rounded-full;
+}
+
+/* Settings icons */
+.settings-icon {
+  @apply text-gray-400 hover:text-white transition-colors;
+}
