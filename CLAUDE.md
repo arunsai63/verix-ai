@@ -16,6 +16,12 @@ docker-compose logs -f backend               # View backend logs
 docker-compose down                          # Stop all services
 ```
 
+## how to test
+- using docker compose restart the service you made changes to and verify the changes are reflected in the application.
+- first if its builing and running or not, and then if the API's are working are not using curl may be
+- then "docker-compose exec backend sh -c "cd /app && PYTHONPATH=/app poetry run pytest tests/" for changes in backend
+- npm run build for changes in frontend
+
 ## Architecture
 
 ### Multi-Agent System (backend/app/agents/)
@@ -78,6 +84,7 @@ The system uses specialized agents for document processing and query handling:
 - Backend: pytest with async fixtures, mock LLM providers
 - Frontend: Vitest with React Testing Library
 - Test files adjacent to source files (*.test.py, *.test.tsx)
+- docker-compose exec backend sh -c "cd /app && PYTHONPATH=/app poetry run pytest tests/ --cov=app --cov-report=term-missing"
 
 ## Important Files
 - `backend/app/core/config.py`: System configuration and settings

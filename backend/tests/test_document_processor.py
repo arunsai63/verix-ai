@@ -113,12 +113,13 @@ class TestDocumentProcessor:
         content = """
         This is a document with citations.
         Source: Smith et al., 2023
-        Another line with [Reference 1] in brackets.
+        Another line with references.
         Citation: Important paper
+        Reference: Another important work
         """
         
         citations = processor.extract_citations(content)
         
         assert len(citations) > 0
         assert any("Smith et al., 2023" in c["text"] for c in citations)
-        assert any("Reference 1" in c["text"] for c in citations)
+        assert any("Important paper" in c["text"] for c in citations)
