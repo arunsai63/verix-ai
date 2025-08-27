@@ -14,6 +14,7 @@ Router Organization:
 - chat: Interactive chat with documents
 - analytics: CSV data analytics
 - providers: LLM provider management
+- enhanced: Advanced retrieval and chunking with Phase 1 features
 """
 
 import logging
@@ -33,6 +34,7 @@ from app.api.routes import (
     chat_router,
     analytics_router
 )
+from app.api.routes.enhanced import router as enhanced_router
 
 logging.basicConfig(level=getattr(logging, settings.log_level))
 logger = logging.getLogger(__name__)
@@ -64,6 +66,7 @@ app.include_router(providers_router)
 app.include_router(summarization_router)
 app.include_router(chat_router)
 app.include_router(analytics_router)
+app.include_router(enhanced_router)  # Enhanced retrieval and chunking endpoints
 
 if __name__ == "__main__":
     uvicorn.run(
