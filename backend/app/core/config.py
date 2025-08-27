@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     # Ollama Configuration
     ollama_base_url: str = Field(default="http://localhost:11434", env="OLLAMA_BASE_URL")
     ollama_chat_model: str = Field(default="llama3.2", env="OLLAMA_CHAT_MODEL")
-    ollama_embedding_model: str = Field(default="nomic-embed-text", env="OLLAMA_EMBEDDING_MODEL")
+    ollama_embedding_model: str = Field(default="nomic-embed-text:latest", env="OLLAMA_EMBEDDING_MODEL")
     
     # OpenAI Configuration
     openai_api_key: Optional[str] = Field(default=None, env="OPENAI_API_KEY")

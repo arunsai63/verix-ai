@@ -101,7 +101,7 @@ services:
       # Ollama Configuration
       OLLAMA_BASE_URL: http://ollama:11434
       OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-llama3.2:1b}
-      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
+      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text:latest}
 
       # OpenAI Configuration (Optional)
       # OPENAI_API_KEY: ${OPENAI_API_KEY}
@@ -152,7 +152,7 @@ services:
       EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-ollama}
       OLLAMA_BASE_URL: http://ollama:11434
       OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-llama3.2:1b}
-      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
+      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text:latest}
       SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
       MULTI_AGENT_ENABLED: ${MULTI_AGENT_ENABLED:-true}
       MAX_PARALLEL_DOCUMENTS: ${MAX_PARALLEL_DOCUMENTS:-5}
@@ -191,7 +191,7 @@ services:
       EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-ollama}
       OLLAMA_BASE_URL: http://ollama:11434
       OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-llama3.2:1b}
-      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
+      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text:latest}
       SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
       MULTI_AGENT_ENABLED: ${MULTI_AGENT_ENABLED:-true}
       MAX_PARALLEL_DOCUMENTS: ${MAX_PARALLEL_DOCUMENTS:-2}

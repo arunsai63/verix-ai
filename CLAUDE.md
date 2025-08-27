@@ -5,7 +5,7 @@ Currently Project is in development only so no need of production optimisation o
 
 ## Project Overview
 
-VerixAI is an intelligent document analysis platform using FastAPI (backend) and React (frontend) that processes documents and answers queries with AI-generated responses and citations.
+VerixAI is a focused document analysis platform using FastAPI (backend) and React (frontend) designed for querying large document collections with AI-generated responses backed by precise citations and advanced retrieval algorithms.
 
 ## Commands
 
@@ -29,7 +29,7 @@ The system uses specialized agents for document processing and query handling:
 - **DocumentIngestionAgent**: Parallel document processing
 - **ParallelRetrievalAgent**: Concurrent semantic/keyword search
 - **RankingAgent**: Result scoring and ranking
-- **SummarizationAgent**: Role-aware answer generation
+- **AnswerGenerationAgent**: Role-aware answer generation
 - **CitationAgent**: Source citation extraction
 - **ValidationAgent**: Response quality verification
 
@@ -91,3 +91,6 @@ The system uses specialized agents for document processing and query handling:
 - `backend/app/services/document_processor.py`: Core document processing logic
 - `frontend/src/services/api.ts`: Frontend API integration
 - `docker-compose.yml`: Multi-service orchestration
+
+things to note:
+github cli is installed and working, you can use it. use profile arunsai63 (my github username is arunsai63)

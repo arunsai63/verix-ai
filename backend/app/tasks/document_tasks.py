@@ -1,6 +1,7 @@
 import os
 import logging
 import asyncio
+import hashlib
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 from celery import Task, group, chord
@@ -139,16 +140,24 @@ def process_document(
         # Store in vector database in batches
         vector_store = VectorStoreService()
         batch_size = 100
-        chunks_stored = 0
         
-        for i in range(0, len(all_chunks), batch_size):
-            batch = all_chunks[i:i + batch_size]
-            stored = vector_store.add_document(
-                dataset_name=dataset_name,
-                chunks=batch,
-                metadata=metadata
-            )
-            chunks_stored += stored
+        # Create document structure for vector store
+        document = {
+            "metadata": {
+                "file_hash": hashlib.md5(file_path.encode()).hexdigest(),
+                "filename": Path(file_path).name,
+                "file_path": file_path,
+                **(metadata or {})
+            },
+            "chunks": all_chunks
+        }
+        
+        # Store chunks in vector store
+        doc_ids = vector_store.add_documents(
+            documents=[document],
+            dataset_name=dataset_name
+        )
+        chunks_stored = len(doc_ids)
         
         # Update progress
         if job_id:

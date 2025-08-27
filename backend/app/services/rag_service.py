@@ -152,13 +152,16 @@ class RAGService:
         """Generate response using LLM."""
         chain = LLMChain(llm=self.llm, prompt=prompt)
         
-        response = await chain.arun(
-            query=query,
-            context=context,
-            tone=tone
-        )
+        response = await chain.ainvoke({
+            "query": query,
+            "context": context,
+            "tone": tone
+        })
         
-        return response
+        # Extract the text from the response
+        if isinstance(response, dict) and "text" in response:
+            return response["text"]
+        return str(response)
     
     def _parse_response(
         self,

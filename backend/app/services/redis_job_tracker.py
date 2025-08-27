@@ -54,19 +54,19 @@ class RedisJobTracker:
             "id": job_id,
             "type": job_type,
             "dataset_name": dataset_name,
-            "total_files": total_files,
-            "files": file_names,
+            "total_files": str(total_files),
+            "files": json.dumps(file_names),  # Serialize list to JSON string
             "status": JobStatus.QUEUED.value,
-            "progress": 0,
-            "documents_processed": 0,
-            "documents_failed": 0,
-            "chunks_created": 0,
+            "progress": "0",
+            "documents_processed": "0",
+            "documents_failed": "0",
+            "chunks_created": "0",
             "created_at": datetime.utcnow().isoformat(),
             "updated_at": datetime.utcnow().isoformat(),
-            "started_at": None,
-            "completed_at": None,
-            "error": None,
-            "logs": []
+            "started_at": "",  # Use empty string instead of None
+            "completed_at": "",  # Use empty string instead of None
+            "error": "",  # Use empty string instead of None
+            "logs": json.dumps([])  # Serialize empty list to JSON string
         }
         
         # Store job data
@@ -87,10 +87,10 @@ class RedisJobTracker:
             file_data = {
                 "name": file_name,
                 "status": "pending",
-                "chunks": 0,
-                "error": None,
-                "started_at": None,
-                "completed_at": None
+                "chunks": "0",
+                "error": "",
+                "started_at": "",
+                "completed_at": ""
             }
             self.redis_client.hset(file_key, mapping=file_data)
             self.redis_client.expire(file_key, self.job_ttl)
@@ -241,12 +241,27 @@ class RedisJobTracker:
             if file_data:
                 files.append(file_data)
         
-        job_data["files"] = files
+        # Deserialize files list from JSON
+        if "files" in job_data and isinstance(job_data["files"], str):
+            try:
+                job_data["files"] = json.loads(job_data["files"])
+            except json.JSONDecodeError:
+                job_data["files"] = []
+        
+        # Add file details
+        job_data["file_details"] = files
         
         # Get logs
         log_key = f"job:{job_id}:logs"
         logs = self.redis_client.lrange(log_key, 0, -1)
         job_data["logs"] = [json.loads(log) for log in logs]
+        
+        # Deserialize logs if needed
+        if "logs" in job_data and isinstance(job_data["logs"], str):
+            try:
+                job_data["logs"] = json.loads(job_data["logs"])
+            except json.JSONDecodeError:
+                job_data["logs"] = []
         
         # Calculate estimated time remaining
         if job_data.get("status") == JobStatus.PROCESSING.value:

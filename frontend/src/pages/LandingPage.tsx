@@ -17,8 +17,6 @@ import {
   Github,
   Linkedin,
   Globe,
-  BookOpen,
-  MessageCircle,
   LineChart,
   Cpu,
   Layers,
@@ -93,8 +91,8 @@ const LandingPage: React.FC = () => {
     { name: 'Document Ingestion', status: 'Active', progress: 85, color: 'primary' },
     { name: 'Parallel Retrieval', status: 'Processing', progress: 60, color: 'accent' },
     { name: 'Ranking Engine', status: 'Optimizing', progress: 90, color: 'success' },
-    { name: 'Summarization', status: 'Ready', progress: 100, color: 'warning' },
     { name: 'Citation Validator', status: 'Verified', progress: 95, color: 'primary' },
+    { name: 'Result Scorer', status: 'Ready', progress: 100, color: 'warning' },
     { name: 'Quality Control', status: 'Monitoring', progress: 75, color: 'accent' }
   ];
 
@@ -674,7 +672,7 @@ const LandingPage: React.FC = () => {
                   <div>
                     <p className="text-sm font-semibold text-neutral-300 mb-3">Supported Formats</p>
                     <div className="grid grid-cols-4 gap-2">
-                      {['PDF', 'DOCX', 'XLSX', 'CSV', 'HTML', 'TXT', 'MD', 'PPTX'].map((format, index) => (
+                      {['PDF', 'DOCX', 'XLSX', 'HTML', 'TXT', 'MD', 'PPTX', 'JSON'].map((format, index) => (
                         <motion.div
                           key={format}
                           initial={{ opacity: 0, y: 10 }}

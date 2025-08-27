@@ -1,6 +1,7 @@
 import os
 from typing import List, Dict, Any, Optional, Tuple
 import logging
+import json
 from pathlib import Path
 import chromadb
 from chromadb.config import Settings as ChromaSettings
@@ -49,6 +50,28 @@ class VectorStoreService:
             logger.error(f"Error initializing vector store: {str(e)}")
             raise
     
+    def _clean_metadata(self, metadata: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Clean metadata to ensure all values are serializable.
+        Converts lists, dicts, and other complex types to strings.
+        """
+        cleaned = {}
+        for key, value in metadata.items():
+            if isinstance(value, (str, int, float, bool)):
+                cleaned[key] = value
+            elif isinstance(value, list):
+                # Convert lists to comma-separated strings
+                cleaned[key] = ", ".join(str(v) for v in value)
+            elif isinstance(value, dict):
+                # Convert dicts to JSON strings
+                cleaned[key] = json.dumps(value)
+            elif value is None:
+                cleaned[key] = ""
+            else:
+                # Convert other types to string
+                cleaned[key] = str(value)
+        return cleaned
+    
     def add_documents(
         self,
         documents: List[Dict[str, Any]],
@@ -70,8 +93,10 @@ class VectorStoreService:
             
             for doc in documents:
                 for chunk in doc.get("chunks", []):
+                    # Clean and merge metadata
+                    chunk_metadata = self._clean_metadata(chunk.get("metadata", {}))
                     metadata = {
-                        **chunk["metadata"],
+                        **chunk_metadata,
                         "dataset_name": dataset_name,
                         "document_id": doc["metadata"]["file_hash"]
                     }

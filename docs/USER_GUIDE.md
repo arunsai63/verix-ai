@@ -35,8 +35,8 @@ VerixAI is an intelligent document analysis assistant that helps you quickly ext
    - HTML files
    - Text files (.txt)
    - Markdown files (.md)
-   - CSV spreadsheets
    - Excel files (.xlsx)
+   - JSON files (.json)
 
 3. **Choose a Dataset**
    - **Create New Dataset**: Enter a descriptive name (e.g., "Q1-2024-reports")
@@ -82,20 +82,20 @@ VerixAI is an intelligent document analysis assistant that helps you quickly ext
 ### Example Queries by Role
 
 #### General Queries
-- "Summarize the main findings across all documents"
+- "What are the main findings across all documents?"
 - "What are the key dates and deadlines mentioned?"
 - "List all recommendations provided"
 
 #### Medical Professional Queries
 - "What medications is the patient currently taking?"
-- "Summarize the patient's medical history"
+- "What is the patient's medical history?"
 - "Are there any noted allergies or contraindications?"
 - "What were the results of the latest lab tests?"
 
 #### Legal Professional Queries
 - "Find all cases related to breach of contract"
 - "What precedents support this argument?"
-- "Summarize the key legal principles discussed"
+- "What are the key legal principles discussed?"
 - "What damages were awarded in similar cases?"
 
 #### HR Professional Queries
@@ -277,7 +277,7 @@ A: Currently, datasets are instance-wide. User-specific permissions are planned 
 ### File Types
 - 📄 PDF, DOCX, PPTX
 - 📝 TXT, MD, HTML
-- 📊 CSV, XLSX
+- 📊 XLSX, JSON
 
 ### Roles
 - 👤 **General**: Standard analysis

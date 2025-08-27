@@ -10,9 +10,6 @@ Router Organization:
 - documents: Document upload and querying
 - datasets: Dataset management
 - jobs: Background job tracking
-- summarization: Document summarization features
-- chat: Interactive chat with documents
-- analytics: CSV data analytics
 - providers: LLM provider management
 - enhanced: Advanced retrieval and chunking with Phase 1 features
 """
@@ -29,10 +26,7 @@ from app.api.routes import (
     system_router,
     documents_router,
     datasets_router,
-    jobs_router,
-    summarization_router,
-    chat_router,
-    analytics_router
+    jobs_router
 )
 from app.api.routes.enhanced import router as enhanced_router
 
@@ -63,9 +57,6 @@ app.include_router(documents_router)
 app.include_router(datasets_router)
 app.include_router(jobs_router)
 app.include_router(providers_router)
-app.include_router(summarization_router)
-app.include_router(chat_router)
-app.include_router(analytics_router)
 app.include_router(enhanced_router)  # Enhanced retrieval and chunking endpoints
 
 if __name__ == "__main__":

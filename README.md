@@ -4,9 +4,9 @@
 [![Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![React Version](https://img.shields.io/badge/react-18-blue.svg)](https://reactjs.org/)
 
-**VerixAI is a production-ready document analysis platform that empowers knowledge workers to query large document collections and receive AI-generated answers with precise, verifiable citations.**
+**VerixAI is a production-ready document analysis platform focused on one core mission: helping knowledge workers query large document collections efficiently and receive AI-generated answers with precise, verifiable citations.**
 
-Whether you're a doctor reviewing patient histories, a lawyer researching case law, or an HR professional managing policies, VerixAI adapts to your domain, providing accurate and context-aware responses.
+Designed for professionals handling extensive document repositories—whether medical records, legal cases, or corporate policies—VerixAI provides accurate, context-aware responses backed by advanced retrieval and ranking algorithms.
 
 <img width="1541" height="770" alt="image" src="https://github.com/user-attachments/assets/b58ea83a-fb0f-4e24-af46-fd4a8179f4dd" />
 
@@ -14,16 +14,14 @@ Whether you're a doctor reviewing patient histories, a lawyer researching case l
 
 ## ✨ Key Features
 
-- **Multi-Format Document Ingestion**: Process a wide range of file types including PDF, DOCX, PPTX, HTML, TXT, MD, CSV, and XLSX.
-- **Intelligent RAG Pipeline**: Utilizes a sophisticated Retrieval-Augmented Generation (RAG) pipeline with hybrid search (semantic + keyword) for accurate information retrieval.
-- **Cited & Verifiable Answers**: Every AI-generated answer is backed by clear citations from the source documents, complete with confidence scores.
-- **Role-Aware Responses**: The system adapts its language and focus based on the selected user role (e.g., Doctor, Lawyer, HR), providing tailored insights and disclaimers.
-- **Dataset Management**: Easily organize documents into distinct, searchable collections for better context isolation and management.
-- **Smart Document Summarization**: Generate executive summaries, key points, chapter-wise breakdowns, or technical abstracts with configurable length and style.
-- **Interactive Chat with Documents**: Have natural conversations with your documents, maintaining context across multiple questions and follow-ups.
-- **CSV Data Analytics**: Analyze CSV files using natural language queries, get instant visualizations, statistical insights, and data transformations.
-- **Multi-Agent Architecture**: Leverages specialized AI agents for document ingestion, retrieval, ranking, summarization, and validation.
-- **Scalable & Asynchronous**: Built with a modern, asynchronous stack (FastAPI, React) and containerized for easy deployment and scaling.
+- **Multi-Format Document Ingestion**: Process PDF, DOCX, PPTX, HTML, TXT, MD, XLSX, and JSON files with high-fidelity extraction.
+- **Advanced RAG Pipeline**: Sophisticated Retrieval-Augmented Generation with hybrid search (semantic + keyword) and advanced ranking algorithms.
+- **Precise Citations**: Every answer includes clear citations with source documents, chunk indices, and confidence scores for full verifiability.
+- **Role-Aware Responses**: Tailored responses for different professional contexts (Doctor, Lawyer, HR) with appropriate disclaimers and terminology.
+- **Dataset Management**: Organize documents into isolated, searchable collections for improved query accuracy and context control.
+- **Multi-Agent Architecture**: Specialized AI agents for document ingestion, parallel retrieval, ranking, citation validation, and quality control.
+- **Parallel Processing**: Asynchronous document processing with configurable worker pools for handling large-scale document collections.
+- **Scalable Infrastructure**: Modern async stack (FastAPI, React) containerized for easy deployment and horizontal scaling.
 
 ---
 
@@ -46,11 +44,11 @@ Whether you're a doctor reviewing patient histories, a lawyer researching case l
 ## 🗺️ Roadmap
 
 ### Recently Completed ✅
-- [x] **Smart Document Summarization**: Multiple summary types with configurable length
-- [x] **Interactive Chat with Documents**: Context-aware conversations with document collections
-- [x] **CSV Data Analytics**: Natural language data analysis with visualizations
-- [x] **Multi-Agent Architecture**: Specialized agents for different processing tasks
+- [x] **Multi-Agent Architecture**: Specialized agents for document processing and retrieval
+- [x] **Advanced Retrieval System**: Hybrid search with semantic and keyword matching
+- [x] **Parallel Document Processing**: Asynchronous processing with worker pools
 - [x] **Multi-LLM Support**: Support for Ollama (local models), OpenAI, and Claude
+- [x] **Citation Validation**: Automated validation of source citations
 
 ### Phase 1: Core Enhancements (Q1 2025)
 - [ ] **Advanced Document Processing**: OCR support for scanned documents

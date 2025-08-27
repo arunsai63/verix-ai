@@ -16,6 +16,8 @@ from app.agents.multi_agent_system import MultiAgentOrchestrator
 from app.schemas.requests import QueryRequest
 from app.schemas.responses import QueryResponse, IngestionResponse
 from app.services.redis_job_tracker import redis_job_tracker
+from app.services.async_document_processor import AsyncDocumentProcessor
+from app.services.vector_store import VectorStoreService
 from app.tasks.document_tasks import process_document_batch, process_with_multi_agent
 
 logger = logging.getLogger(__name__)
@@ -24,6 +26,8 @@ router = APIRouter(prefix="/api", tags=["documents"])
 # Initialize orchestrators
 orchestrator = DocumentOrchestrator()
 multi_agent_orchestrator = MultiAgentOrchestrator()
+document_processor = AsyncDocumentProcessor()
+vector_store = VectorStoreService()
 
 # Determine which orchestrator to use based on configuration
 use_multi_agent = settings.multi_agent_enabled
@@ -96,13 +100,10 @@ async def upload_documents(
             
             # Create job entry
             job_id = await redis_job_tracker.create_job(
-                job_type="document_processing",
                 dataset_name=dataset_name,
-                total_items=len(file_paths),
-                metadata={
-                    "files": [Path(fp).name for fp in file_paths],
-                    "celery_task_id": task.id
-                }
+                total_files=len(file_paths),
+                file_names=[Path(fp).name for fp in file_paths],
+                job_type="document_processing"
             )
             
             return {
@@ -112,25 +113,28 @@ async def upload_documents(
                 "celery_task_id": task.id
             }
         else:
-            # Process synchronously
-            if use_multi_agent:
-                result = await multi_agent_orchestrator.process_documents_multi_agent(
-                    file_paths=file_paths,
-                    dataset_name=dataset_name,
-                    metadata=metadata_dict
+            # Process synchronously using AsyncDocumentProcessor
+            processed_docs = await document_processor.process_batch_async(
+                file_paths=file_paths,
+                dataset_name=dataset_name,
+                metadata=metadata_dict
+            )
+            
+            # Store documents in vector store
+            chunks_created = 0
+            if processed_docs:
+                doc_ids = vector_store.add_documents(
+                    documents=processed_docs,
+                    dataset_name=dataset_name
                 )
-            else:
-                result = await orchestrator.process_documents(
-                    file_paths=file_paths,
-                    dataset_name=dataset_name,
-                    metadata=metadata_dict
-                )
+                for doc in processed_docs:
+                    chunks_created += len(doc.get("chunks", []))
             
             return IngestionResponse(
                 status="success",
                 dataset_name=dataset_name,
-                documents_processed=result.get("documents_processed", 0),
-                chunks_created=result.get("chunks_created", 0),
+                documents_processed=len(processed_docs),
+                chunks_created=chunks_created,
                 message=f"Successfully processed {len(file_paths)} documents"
             )
         

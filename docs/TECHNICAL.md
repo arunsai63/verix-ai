@@ -65,7 +65,7 @@ class DocumentProcessor:
 ```
 
 **Key Features:**
-- Supports PDF, DOCX, PPTX, HTML, TXT, MD, CSV, XLSX
+- Supports PDF, DOCX, PPTX, HTML, TXT, MD, XLSX, JSON
 - Automatic metadata extraction
 - Smart chunking with overlap
 - Citation detection
@@ -137,7 +137,7 @@ class RAGService:
     - generate_answer(): Create cited response
     - _prepare_context(): Format retrieved chunks
     - _parse_response(): Extract citations
-    - generate_summary(): Summarize documents
+    - generate_answer(): Generate answers with citations
 ```
 
 **Role-Specific Prompts:**
@@ -154,7 +154,7 @@ Orchestrates document processing pipeline:
 class DocumentOrchestrator:
     - DocumentIngestionAgent: File processing
     - RetrievalAgent: Document search
-    - SummarizationAgent: Answer generation
+    - AnswerGenerationAgent: Answer generation
     - process_query(): Complete query pipeline
 ```
 
@@ -259,7 +259,7 @@ CREATE TABLE documents (
     metadata JSONB
 );
 
--- Queries table (for analytics)
+-- Queries table (for tracking)
 CREATE TABLE queries (
     id UUID PRIMARY KEY,
     query_text TEXT,
@@ -413,7 +413,7 @@ docker ps | grep chromadb
 ### Planned Features
 - Multi-language support
 - Real-time collaboration
-- Advanced analytics dashboard
+- Advanced query dashboard
 - Custom embedding models
 - Fine-tuned LLMs
 
