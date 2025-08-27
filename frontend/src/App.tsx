@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AnimatePresence } from 'framer-motion';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
+import TechnicalArchitecture from './pages/TechnicalArchitecture';
 import './index.css';
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard/*" element={<Dashboard />} />
+          <Route path="/technical" element={<TechnicalArchitecture />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AnimatePresence>
